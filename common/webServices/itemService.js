@@ -5,7 +5,38 @@ import {receiveProducts,receiveProductsFail,getAddedCartItem} from '../actions/i
 import {logEventsConfig} from '../awsConfig/config.js'
 
 export function getItems(){
-    return fetchItems(receiveProducts,receiveProductsFail)
+   // return fetchItems(receiveProducts,receiveProductsFail)
+    return function (dispatch) {
+        let config={
+            method: 'GET',
+            headers: {  'Content-Type': 'application/json', 'Accept': 'application/json','authorization':'151561vdfvdbdbdb1561fdbdf','Logeventsparam':JSON.stringify(logEventsConfig) }
+        };
+
+        return fetch('http://localhost:3001/getLogEvents/',config)
+                .then(res=> res.json())
+        .then(resJson=> {
+            console.log("getLogEvents: ",resJson)
+        var getLogEvents={};
+        getLogEvents.nextForwardToken=resJson.nextForwardToken;
+        getLogEvents. nextBackwardToken=resJson. nextBackwardToken;
+        localStorage.setItem("getLogEvents",JSON.stringify(getLogEvents));
+        //if(!itemArr) {
+        dispatch(receiveProducts(resJson))
+        //}
+        //else{
+        //  dispatch(receiveProducts(itemArr,resJson))
+        //}
+
+
+
+    }).catch(err=>{
+        debugger;
+
+    dispatch(receiveProductsFail(err));
+
+})
+
+}
 }
 
  function fetchItems(successDispach,errorDispatch,itemArr){
@@ -43,31 +74,5 @@ export function ModalItems(itemArr){
 }
 
 export function getLogEvents(){
-    return function (dispatch) {
-        let config={
-            method: 'GET',
-            headers: {  'Content-Type': 'application/json', 'Accept': 'application/json','Logeventsparam':JSON.stringify(logEventsConfig) }
-        };
-        logEventsConfig
-        return fetch('http://localhost:3001/getLogEvents/',config)
-                .then(res=> res.json())
-        .then(resJson=> {
-            console.log("getLogEvents: ",resJson)
-        //if(!itemArr) {
-            dispatch(receiveProducts(resJson))
-        //}
-        //else{
-          //  dispatch(receiveProducts(itemArr,resJson))
-        //}
 
-
-
-    }).catch(err=>{
-        debugger;
-
-       dispatch(receiveProductsFail(err));
-
-})
-
-}
 }

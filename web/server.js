@@ -21,7 +21,7 @@ app.post('/auth/getToken',function(req,res){
     //    res.sendStatus(403);
     //}
 });
-app.get('/getItems/',function(req,res){
+app.get('/getLogEvents/',function(req,res){
 
     var token=req.headers['authorization'];
     var logeventsparam=req.headers['logeventsparam'];
@@ -32,7 +32,10 @@ app.get('/getItems/',function(req,res){
 
         cloudwatchlogs.getLogEvents(JSON.parse(logeventsparam), function(err, data) {
             if (err) console.log(err, err.stack); // an error occurred
-            else        res.status(200).json(data)           // successful response
+            else {
+
+                res.status(200).json(data)
+            }// successful response
         });
     }
 });
