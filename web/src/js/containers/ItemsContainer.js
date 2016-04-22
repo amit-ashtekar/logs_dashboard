@@ -25,14 +25,17 @@ export default class ItemContainer extends React.Component {
         <hr/>
             </div>
                 <div className="box">
-            <ItemList >
-        {products.events && products.events.map(product =>
-        <Item
+            <ItemList
+        itemAddAction={this.props.itemactions.getItems}>
+        {products && products.map(item=>
+    item.events.map(product =>
+<Item
 
     product={product}
 
-        itemAddAction={this.props.itemAddActionCreators.addItemToCart}
-     />
+
+        />
+)
 )}
 </ItemList>
     </div>
@@ -41,7 +44,7 @@ export default class ItemContainer extends React.Component {
 }
 }
 const mapStateToProps = (state) => ({
-    products   : state.Items[0],
+    products   : state.Items,
     addeditemsId:state.AddedItemsCount,
 
 });
