@@ -26,11 +26,11 @@ export default class ItemContainer extends React.Component {
             </div>
                 <div className="box">
             <ItemList >
-        {products.map(product =>
+        {products.events && products.events.map(product =>
         <Item
-        key={product.id}
+
     product={product}
-    addedItemId={addeditemsId}
+
         itemAddAction={this.props.itemAddActionCreators.addItemToCart}
      />
 )}

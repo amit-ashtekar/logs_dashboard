@@ -8,16 +8,24 @@ export default class Item extends React.Component {
     constructor(props) {
         super(props);
     }
+    onAddToCartClicked(e,id){
+        e.preventDefault();
+        this.props.itemAddAction()
+        // alert('onAddToCartClicked called')
+    }
 
     render() {
         const tdstyle = {
             'padding-top': '2%'
         };
-        const {id, price, quantity, title } = this.props.product
+      //  const {id, price, quantity, title } = this.props.product
 
         return (
-            <div className="box" style={tdstyle}> {id}:{title} - &#36;{price} {quantity ? `x ${quantity}` : null}
-
+            <div className="box" style={tdstyle}> {this.props.product.message }
+    <Button className="pull-right" type="button"
+    onClick={(e)=>this.onAddToCartClicked(e,id)} >
+Add to cart
+</Button>
                 </div>
             )
     }
