@@ -7,6 +7,10 @@ import {logEventsConfig} from '../awsConfig/config.js'
 export function getItems(){
    // return fetchItems(receiveProducts,receiveProductsFail)
     return function (dispatch) {
+       var getLogEventsStorObj= JSON.parse( localStorage.getItem("getLogEvents"));
+        if(getLogEventsStorObj){
+            logEventsConfig.nextToken=getLogEventsStorObj.nextForwardToken;
+        }
         let config={
             method: 'GET',
             headers: {  'Content-Type': 'application/json', 'Accept': 'application/json','authorization':'151561vdfvdbdbdb1561fdbdf','Logeventsparam':JSON.stringify(logEventsConfig) }

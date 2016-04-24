@@ -7,8 +7,8 @@ export let logEventsConfig = {
     logGroupName: 'US-QA', /* required */
     logStreamName: 'tomcat', /* required */
 
-    limit: 6,
-    nextToken: "f/32573783987459276126606562711039608262906072807540785153",
+    limit: 1,
+    nextToken: null,
     startFromHead: true || false,
     startTime: 0
 };
