@@ -22,10 +22,7 @@ export default class Item extends React.Component {
 
         return (
             <div className="box" style={tdstyle}> {this.props.product.message }
-    <Button className="pull-right" type="button"
-    onClick={(e)=>this.onAddToCartClicked(e,id)} >
-Add to cart
-</Button>
+
                 </div>
             )
     }

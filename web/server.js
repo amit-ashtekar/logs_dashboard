@@ -33,7 +33,7 @@ app.get('/getLogEvents/',function(req,res){
         cloudwatchlogs.getLogEvents(JSON.parse(logeventsparam), function(err, data) {
             if (err) console.log(err, err.stack); // an error occurred
             else {
-
+                console.log(data);
                 res.status(200).json(data)
             }// successful response
         });
