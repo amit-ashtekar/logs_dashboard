@@ -40,6 +40,18 @@ app.get('/getLogEvents/',function(req,res){
     }
 });
 
+app.get('/getGroups/',function(req,res){
+    var token=req.headers['authorization'];
+    if(!token){
+        res.sendStatus(401);
+    }
+    else {
+        res.status(200)
+            .json({groups: ['US-QA']});
+    }
+
+});
+
 server = http.createServer(app);
 
 server.listen(app.get("port"), function() {
