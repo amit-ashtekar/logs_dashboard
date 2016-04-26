@@ -45,11 +45,11 @@ export default class ItemContainer extends React.Component {
             <ItemList
         itemAddAction={this.props.itemactions.getItems}>
         {products && products.map(item=>
-    item.events.map(product =>
+    item.events.map((product,i) =>
 <Item
 
     product={product}
-
+indexkey={i}
 
         />
 )
