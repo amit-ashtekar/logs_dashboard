@@ -7,17 +7,22 @@ export default class ItemList extends React.Component {
     constructor(props) {
         super(props);
     }
-    onAddToCartClicked(e){
+    onNextClicked(e,paginationAction){
         e.preventDefault();
-        this.props.itemAddAction()
+        this.props.itemAddAction(paginationAction)
         // alert('onAddToCartClicked called')
     }
+
     render() {
         return (
             <div>
             <div>{this.props.children}</div>
+                <Button className="pull-left"
+                        onClick={(e)=>this.onNextClicked(e,"Prev")} >
+                    Prev
+                </Button>
 <Button className="pull-right"
-onClick={(e)=>this.onAddToCartClicked(e)} >
+onClick={(e)=>this.onNextClicked(e,"Next")} >
 Next
 </Button>
 

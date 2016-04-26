@@ -4,12 +4,16 @@
 import {receiveProducts,receiveProductsFail,getAddedCartItem} from '../actions/itemActions';
 import {logEventsConfig} from '../awsConfig/config.js'
 
-export function getItems(){
+export function getItems(paginationAction){
    // return fetchItems(receiveProducts,receiveProductsFail)
     return function (dispatch) {
        var getLogEventsStorObj= JSON.parse( localStorage.getItem("getLogEvents"));
-        if(getLogEventsStorObj){
+
+        if(getLogEventsStorObj && paginationAction==="Next" ){
             logEventsConfig.nextToken=getLogEventsStorObj.nextForwardToken;
+        }
+        else if(getLogEventsStorObj && paginationAction==="Prev"){
+            logEventsConfig.nextToken=getLogEventsStorObj.nextBackwardToken;
         }
         let config={
             method: 'GET',
