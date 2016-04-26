@@ -21,6 +21,7 @@ const InitialState={
 const InitialStateStream={
     streams:[],
     stream:""
+
 }
 export function groups(state = InitialState.groups, action) {
     switch (action.type) {
@@ -64,6 +65,20 @@ export function streams(state = InitialStateStream.streams, action) {
             return Object.assign({},state,{
                 message: action.payload.message
             })
+        default:
+
+            return Object.assign({},state)
+    }
+}
+
+export function stream(state = InitialStateStream.stream, action) {
+    switch (action.type) {
+
+        case GET_SELECTED_STREAM:
+            return Object.assign({},state,{
+                stream: action.payload.stream
+            })
+
         default:
 
             return Object.assign({},state)

@@ -16,4 +16,5 @@ export const streamObj=  createConstants(
     'GET_STREAMS_LIST_SUCCESS',
     'GET_STREAMS_LIST_FAIL',
     'GET_SELECTED_STREAM'
+
 )

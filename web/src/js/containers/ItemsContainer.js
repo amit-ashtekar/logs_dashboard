@@ -15,9 +15,16 @@ import {connect} from 'react-redux';
 
 export default class ItemContainer extends React.Component {
     componentWillMount (){
-      this.props.itemactions.getItems();
+
 
     }
+    componentWillReceiveProps(nextProps){
+        debugger;
+        //if(nextProps.stream["stream"]){
+        //    this.props.itemactions.getItems();
+        //}
+    }
+
     render() {
         const { products,addeditemsId } = this.props
         return (
@@ -57,7 +64,8 @@ export default class ItemContainer extends React.Component {
 }
 const mapStateToProps = (state) => ({
     products   : state.Items,
-    addeditemsId:state.AddedItemsCount
+    addeditemsId:state.AddedItemsCount,
+    stream:state.stream
 
 
 });
