@@ -23,6 +23,7 @@ export class LoginView extends React.Component {
     var prp=nextProps;
   }
 
+
   handleClick(e) {
       e.preventDefault();
     const username = this.refs.username.value

@@ -21,7 +21,7 @@ export default class GroupListContainer extends React.Component {
         const { groups } = this.props;
 if(groups.groups) {
     var groupValues = groups.groups.groups.map((group) => {
-            return ( < option value = {group} > {group} < / option >)
+            return ( < option value = {group} > {group} </ option >)
 }
     );
     }
