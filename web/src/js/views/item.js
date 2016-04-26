@@ -13,15 +13,27 @@ export default class Item extends React.Component {
         this.props.itemAddAction()
         // alert('onAddToCartClicked called')
     }
+    getStyle(id){
+        if(id % 2 == 0)
+        return true;
+        else
+        return false;
+    }
+
 
     render() {
         const tdstyle = {
-            'padding-top': '2%'
+            'padding-top': '2%',
+        'background-color':'#CABEAD'
+        };
+        const td1style = {
+            'padding-top': '2%',
+            'background-color':'#F0E197'
         };
       //  const {id, price, quantity, title } = this.props.product
 
         return (
-            <div className="box" style={tdstyle}> {this.props.product.message }
+            <div className="box" style={this.getStyle(this.props.indexkey)?tdstyle:td1style}> {this.props.product.message }
 
                 </div>
             )
