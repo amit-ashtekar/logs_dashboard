@@ -26,10 +26,10 @@ if(groups.groups) {
     );
     }
         return (
-            <Input type="select" label="Select Groups"
-        placeholder="Select Groups"
+            <Input type="select" label="Select Group"
+        placeholder="Select Group"
     onChange={(e)=>this.onGroupSelected(e,this)}>
-<option value="select">Select Groups</option>
+<option value="select">Select Group</option>
 
 {groupValues}
 
