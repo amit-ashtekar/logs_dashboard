@@ -13,7 +13,7 @@ export function Items(state = InitialState.items, action) {
     switch (action.type) {
         case "RECEIVE_PRODUCTS":
             return[
-                ...state,
+                ...state.slice(state.length),
                 action.products
             ]
         default:
