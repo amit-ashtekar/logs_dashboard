@@ -6,7 +6,7 @@ import React, {PropTypes } from 'react';
 import {Col} from 'react-bootstrap'
 import {ItemList} from '../views'
 import {Item} from '../views'
-import {GroupListContainer} from './index.js'
+import {GroupListContainer,StreamListContainer} from './index.js'
 import {bindActionCreators} from 'redux';
 import * as itemActionCreators from 'common/webServices/itemService';
 import * as itemAddActionCreators from 'common/actions/itemActions';
@@ -28,7 +28,11 @@ export default class ItemContainer extends React.Component {
 <Col xs={12} sm={12} md={6}>
         <GroupListContainer />
             </Col>
+        <Col xs={12} sm={12} md={6}>
+        < StreamListContainer />
+        </Col>
         </div>
+
         <div className="row">
         <Col xs={12} sm={12} md={12}>
             <ItemList

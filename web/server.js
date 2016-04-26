@@ -52,6 +52,19 @@ app.get('/getGroups/',function(req,res){
 
 });
 
+app.get('/getStreams/',function(req,res){
+    var token=req.headers['authorization'];
+    if(!token){
+        res.sendStatus(401);
+    }
+    else {
+        res.status(200)
+            .json({streams: ['tomcat']});
+    }
+
+});
+
+
 server = http.createServer(app);
 
 server.listen(app.get("port"), function() {

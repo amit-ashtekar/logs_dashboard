@@ -32,7 +32,7 @@ export function groupListSuccess(groups){
 
 export function groupListFail(msg){
     return {
-        type:GET_GROUPS_LIST_SUCCESS,
+        type:GET_GROUPS_LIST_FAIL,
         payload:{
             message:msg
         }
@@ -42,9 +42,47 @@ export function groupListFail(msg){
 
 export function selectedGroup(group){
     return {
-        type:GET_GROUPS_LIST_SUCCESS,
+        type:GET_SELECTED_GROUP,
         payload:{
             group:group
+        }
+
+    }
+}
+
+
+
+export function getStreamList(){
+    return {
+        type:GET_STREAMS_LIST
+
+    }
+}
+export function streamListSuccess(streams){
+    return {
+        type:GET_STREAMS_LIST_SUCCESS,
+        payload:{
+            streams:streams
+        }
+
+    }
+}
+
+export function streamListFail(msg){
+    return {
+        type:GET_STREAMS_LIST_FAIL,
+        payload:{
+            message:msg
+        }
+
+    }
+}
+
+export function selectedStream(stream){
+    return {
+        type:GET_SELECTED_STREAM,
+        payload:{
+            stream:stream
         }
 
     }
