@@ -6,7 +6,9 @@
 
  'user strict'
 
- var React = require('react-native')
+var React = require('react-native')
+var Streams = require('./Streams')
+// import {getGroups} from 'common/webServices/dropdownList'
 
  var {
    StyleSheet,
@@ -17,7 +19,8 @@
    TouchableHighlight,
    ListView,
    Text,
-   Component
+   Component,
+   ActivityIndicatorIOS
  } = React;
 
  var styles = StyleSheet.create({
@@ -35,11 +38,16 @@
    rowContainer: {
      flexDirection: 'row',
      padding: 10
+   },
+   sectionContainer: {
+     flexDirection: 'row',
+     padding: 5,
+     backgroundColor: '#dfdfdf',
    }
  });
 
 
- var MOCKED_DATA =  ['Group 1', 'Group 2', 'Group 3', 'Group 4'];
+ //var MOCKED_DATA =  ['Group 1', 'Group 2', 'Group 3', 'Group 4'];
 
 
 class Groups extends Component {
@@ -47,33 +55,59 @@ class Groups extends Component {
 constructor(props) {
   super(props)
 
-  var dataSource  = new ListView.DataSource(
-       { rowHasChanged: (r1, r2) => r1.guid !== r2.guid });
+  // var _dataSource  = new ListView.DataSource(
+  //      { rowHasChanged: (r1, r2) => r1.guid !== r2.guid,
+  //        sectionHeaderHasChanged: (s1, s2) => s1 !== s2
+  //      });
      this.state = {
-       dataSource: dataSource.cloneWithRows(MOCKED_DATA)
-       //dataSource: dataSource.cloneWithRows(this.props.listings)
+      // dataSource: _dataSource.cloneWithRows(MOCKED_DATA)
+       dataSource: new ListView.DataSource({
+          rowHasChanged: (row1, row2) => row1.guid !== row2.guid,
+          sectionHeaderHasChanged: (s1, s2) => s1 !== s2
+        })
      };
     loaded: false;
     price: 'fix';
   }
-  rowPressed(guid) {
-    console.log('row pressed' + {guid});
+
+  componentDidMount() {
+    this.fetchData();
+  }
+  fetchData() {
+    //  getGroups()
+    MOCKED_DATA =  ['MOCKED Group 1', 'MOCKED Group 2', 'Group 3', 'Group 4', 'Group 5'];
+    // Fetch real data here and update data source
+    this.setState({
+      dataSource: this.state.dataSource.cloneWithRows(MOCKED_DATA)
+    });
   }
 
-  // componentDidMount() {
-  //     // this.fetchData();
-  //   }
-  //
-  //   fetchData() {
-  //   fetch(REQUEST_URL)
-  //     .then((response) => response.json())
-  //     .then((responseData) => {
-  //       this.setState({
-  //         movies: responseData.movies,
-  //       });
-  //     })
-  //     .done();
-  // }
+  rowPressed(guid) {
+    console.log('row pressed' + {guid});
+    console.log('in rowPressed');
+      this.props.navigator.push ({
+        title: 'Streams',
+        component: Streams
+      });
+  }
+
+  renderSectionHeader(sectionData, sectionID) {
+  return (
+    <View style={styles.sectionContainer}>
+      <Text style={styles.title}>Sample Section added for study</Text>
+    </View>
+  );
+}
+
+renderFooter() {
+    return (
+      <View style={styles.sectionContainer}>
+        <Text style={styles.title}>Sample Footer </Text>
+        <ActivityIndicatorIOS
+          animating={true}
+          size={'large'} />
+      </View>);
+  }
 
   renderRow(rowData, sectionID, rowID) {
     return (
@@ -94,7 +128,10 @@ constructor(props) {
     return (
       <ListView
       dataSource={this.state.dataSource}
-      renderRow={this.renderRow.bind(this)}/>
+      renderRow={this.renderRow.bind(this)}
+      // renderSectionHeader={this.renderSectionHeader}
+      // renderFooter={this.renderFooter} style={styles.listView}
+      />
     );
   }
 }
