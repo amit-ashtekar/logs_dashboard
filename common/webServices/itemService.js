@@ -66,8 +66,12 @@ export function getLiveLogs(){
         var service = Rx.Observable.defer(function () {
             return  fetch('http://localhost:3001/getLogEvents/',config) .then(res=> res.json())
         });
+        var fetchInterval = Rx.Observable.empty().delay(3000);
 
-        var subscription = service.subscribe(
+        var subscription = service
+            .concat(fetchInterval)
+            .repeat()
+            .subscribe(
             function (resJson) {
                 successcb(resJson)
             },
