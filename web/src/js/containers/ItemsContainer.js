@@ -11,6 +11,7 @@ import {bindActionCreators} from 'redux';
 import * as itemActionCreators from 'common/webServices/itemService';
 import * as itemAddActionCreators from 'common/actions/itemActions';
 
+
 import {connect} from 'react-redux';
 
 export default class ItemContainer extends React.Component {
@@ -24,6 +25,7 @@ export default class ItemContainer extends React.Component {
         //    this.props.itemactions.getItems();
         //}
     }
+
 
     render() {
         const { products,addeditemsId } = this.props
@@ -43,7 +45,9 @@ export default class ItemContainer extends React.Component {
         <div className="row">
         <Col xs={12} sm={12} md={12}>
             <ItemList
-        itemAddAction={this.props.itemactions.getItems}>
+        itemAddAction={this.props.itemactions.getItems}
+        liveLogAction={this.props.itemactions.getLiveLogs}
+        liveLogHandlr={this.props.LiveLogHandler}>
         {products && products.map(item=>
     item.events.map((product,i) =>
 <Item
@@ -65,9 +69,8 @@ indexkey={i}
 const mapStateToProps = (state) => ({
     products   : state.Items,
     addeditemsId:state.AddedItemsCount,
-    stream:state.stream
-
-
+    stream:state.stream,
+    LiveLogHandler:state.liveLogHandler
 });
 const mapDispatchToProps = (dispatch) => ({
       itemactions : bindActionCreators(itemActionCreators, dispatch),

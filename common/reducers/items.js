@@ -16,11 +16,27 @@ export function Items(state = InitialState.items, action) {
                 ...state.slice(state.length),
                 action.products
             ]
+        case "RECEIVE_LOGS_LIVE":
+            return[
+                ...state,
+                action.products
+            ]
         default:
 
             return[
                 ...state
             ]
+    }
+}
+export function liveLogHandler(state = {}, action) {
+    switch (action.type) {
+        case "RECEIVE_LIVELOG_HANDLER":
+             return Object.assign({},state,{
+                 LiveLogHandler: action.LiveLogHandler
+        })
+
+        default:
+            return state;
     }
 }
 
