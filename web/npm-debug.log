@@ -42,6 +42,7 @@
 5 verbose install     'toastr',
 5 verbose install     'react-modal',
 5 verbose install     'babel-preset-es2015',
+5 verbose install     'rxjs',
 5 verbose install     'autoprefixer',
 5 verbose install     'autoprefixer-loader',
 5 verbose install     'babel-polyfill',

@@ -43,7 +43,8 @@ export default class ItemContainer extends React.Component {
         <div className="row">
         <Col xs={12} sm={12} md={12}>
             <ItemList
-        itemAddAction={this.props.itemactions.getItems}>
+        itemAddAction={this.props.itemactions.getItems}
+        liveLogAction={this.props.itemactions.getLiveLogs}>
         {products && products.map(item=>
     item.events.map((product,i) =>
 <Item

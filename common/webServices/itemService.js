@@ -1,8 +1,9 @@
 /**
  * Created by amita on 3/18/2016.
  */
-import {receiveProducts,receiveProductsFail,getAddedCartItem} from '../actions/itemActions';
+import {receiveProducts,receiveProductsFail,getAddedCartItem,receiveLogsLive} from '../actions/itemActions';
 import {logEventsConfig} from '../awsConfig/config.js'
+import Rx from "rxjs";
 
 export function getItems(paginationAction){
    // return fetchItems(receiveProducts,receiveProductsFail)
@@ -47,40 +48,53 @@ export function getItems(paginationAction){
 }
 }
 
- function fetchItems(successDispach,errorDispatch,itemArr){
+
+
+export function getLiveLogs(){
+    // return fetchItems(receiveProducts,receiveProductsFail)
     return function (dispatch) {
-        let config={
+        var getLogEventsStorObj= JSON.parse( localStorage.getItem("liveLogEvents"));
+
+        if(getLogEventsStorObj ){
+            logEventsConfig.nextToken=getLogEventsStorObj.nextForwardToken;
+        }
+
+        var config={
             method: 'GET',
             headers: {  'Content-Type': 'application/json', 'Accept': 'application/json','authorization':'151561vdfvdbdbdb1561fdbdf','Logeventsparam':JSON.stringify(logEventsConfig) }
         };
+        var service = Rx.Observable.defer(function () {
+            return  fetch('http://localhost:3001/getLogEvents/',config) .then(res=> res.json())
+        });
 
-        return fetch('http://localhost:3001/getItems/',config)
-                .then(res=> res.json())
-        .then(resJson=> {
-            console.log("getItems: ",resJson)
-        if(!itemArr) {
-            dispatch(successDispach(resJson))
+        var subscription = service.subscribe(
+            function (resJson) {
+                successcb(resJson)
+            },
+            function (err) {
+               errorcb(err);
+            },
+            function () {
+                console.log('LiveLogError-Completed');
+            });
+
+        function successcb(resJson){
+            if(resJson) {
+
+                console.log("getLogEvents: ", resJson)
+                var getLogEvents = {};
+                getLogEvents.nextForwardToken = resJson.nextForwardToken;
+                getLogEvents.nextBackwardToken = resJson.nextBackwardToken;
+                localStorage.setItem("liveLogEvents", JSON.stringify(getLogEvents));
+                dispatch(receiveLogsLive(resJson))
+            }
         }
-        else{
-            dispatch(successDispach(itemArr,resJson))
+        function errorcb(err){
+            console.log('LiveLogError:', err);
+            dispatch(receiveProductsFail(err));
         }
 
 
 
-    }).catch(err=>{
-        debugger;
-     if(errorDispatch) {
-         dispatch(errorDispatch(err));
-     }
-})
-
-}
-}
-export function ModalItems(itemArr){
-
-    return fetchItems(getAddedCartItem,undefined,itemArr)
-}
-
-export function getLogEvents(){
-
+    }
 }

@@ -12,6 +12,11 @@ export default class ItemList extends React.Component {
         this.props.itemAddAction(paginationAction)
         // alert('onAddToCartClicked called')
     }
+    onLiveLogClicked(e,paginationAction){
+        e.preventDefault();
+        this.props.liveLogAction()
+        // alert('onAddToCartClicked called')
+    }
 
     render() {
         return (
@@ -25,7 +30,10 @@ export default class ItemList extends React.Component {
 onClick={(e)=>this.onNextClicked(e,"Next")} >
 Next
 </Button>
-
+                <Button className="pull-right"
+                        onClick={(e)=>this.onLiveLogClicked(e)} >
+                    Live Update
+                </Button>
             </div>
                 )
             }

@@ -3,13 +3,21 @@
  */
 import {actionObj } from '../constants/checkoutConstants';
 
-const {ADD_TO_CART,CHECKOUT_REQUEST,CHECKOUT_SUCCESS,CHECKOUT_FAILURE,RECEIVE_PRODUCTS,RECEIVE_PRODUCTSFAIL,GET_ADDED_CART_ITEMS,REMOVE_FROM_CART}=actionObj;
+const {ADD_TO_CART,CHECKOUT_REQUEST,CHECKOUT_SUCCESS,CHECKOUT_FAILURE,RECEIVE_PRODUCTS,RECEIVE_PRODUCTSFAIL,GET_ADDED_CART_ITEMS,REMOVE_FROM_CART,RECEIVE_LOGS_LIVE}=actionObj;
 export function receiveProducts(items) {
     return {
          type:RECEIVE_PRODUCTS,
         products: items
     }
 }
+
+export function receiveLogsLive(items) {
+    return {
+        type:RECEIVE_LOGS_LIVE,
+        products: items
+    }
+}
+
 export function receiveProductsFail(err){
     return {
         type:RECEIVE_PRODUCTSFAIL,
