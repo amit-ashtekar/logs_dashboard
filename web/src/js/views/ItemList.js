@@ -3,47 +3,53 @@
  */
 import React, { PropTypes } from 'react'
 import {Button} from 'react-bootstrap';
+import Switch from 'react-toggle-switch'
+
 export default class ItemList extends React.Component {
     constructor(props) {
         super(props);
+
     }
     onNextClicked(e,paginationAction){
         e.preventDefault();
         this.props.itemAddAction(paginationAction)
         // alert('onAddToCartClicked called')
     }
-    onLiveLogClicked(e,paginationAction){
-        e.preventDefault();
-        this.props.liveLogAction()
-        // alert('onAddToCartClicked called')
-    }
-    stopLiveLogLoad(e,handler){
-        e.preventDefault();
-        var handlr=this.props.liveLogHandlr;
-        this.props.liveLogHandlr.LiveLogHandler.unsubscribe();
+
+
+    toggle(e) {
+
+       if(this.value) {
+           this.value = false;
+           this.props.liveLogHandlr.LiveLogHandler.unsubscribe();
+       }
+        else {
+           this.value = true;
+           this.props.liveLogAction()
+
+       }
     }
 
     render() {
+        var isSwitchOn=true;
         return (
             <div>
             <div>{this.props.children}</div>
+                <div className="btn-toolbar">
                 <Button className="pull-left"
                         onClick={(e)=>this.onNextClicked(e,"Prev")} >
                     Prev
                 </Button>
-<Button className="pull-right"
+<Button className="pull-left"
 onClick={(e)=>this.onNextClicked(e,"Next")} >
 Next
 </Button>
-                <Button className="pull-right"
-                        onClick={(e)=>this.onLiveLogClicked(e)} >
-                    Live Update
-                </Button>
-                <Button className="pull-right"
-                        onClick={(e)=>this.stopLiveLogLoad(e)} >
-                    Stop Live Update
-                </Button>
-            </div>
+                    </div>
+                <Switch value={false} on={false} onClick={(e)=>this.toggle(e)}>
+
+                </Switch>
+
+                       </div>
                 )
             }
        }
