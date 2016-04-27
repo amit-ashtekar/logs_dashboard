@@ -25,6 +25,7 @@ export default class ItemContainer extends React.Component {
         //}
     }
 
+
     render() {
         const { products,addeditemsId } = this.props
         return (
@@ -44,7 +45,8 @@ export default class ItemContainer extends React.Component {
         <Col xs={12} sm={12} md={12}>
             <ItemList
         itemAddAction={this.props.itemactions.getItems}
-        liveLogAction={this.props.itemactions.getLiveLogs}>
+        liveLogAction={this.props.itemactions.getLiveLogs}
+        liveLogHandlr={this.props.LiveLogHandler}>
         {products && products.map(item=>
     item.events.map((product,i) =>
 <Item
@@ -66,9 +68,8 @@ indexkey={i}
 const mapStateToProps = (state) => ({
     products   : state.Items,
     addeditemsId:state.AddedItemsCount,
-    stream:state.stream
-
-
+    stream:state.stream,
+    LiveLogHandler:state.liveLogHandler
 });
 const mapDispatchToProps = (dispatch) => ({
       itemactions : bindActionCreators(itemActionCreators, dispatch),

@@ -17,6 +17,11 @@ export default class ItemList extends React.Component {
         this.props.liveLogAction()
         // alert('onAddToCartClicked called')
     }
+    stopLiveLogLoad(e,handler){
+        e.preventDefault();
+        var handlr=this.props.liveLogHandlr;
+        this.props.liveLogHandlr.LiveLogHandler.unsubscribe();
+    }
 
     render() {
         return (
@@ -33,6 +38,10 @@ Next
                 <Button className="pull-right"
                         onClick={(e)=>this.onLiveLogClicked(e)} >
                     Live Update
+                </Button>
+                <Button className="pull-right"
+                        onClick={(e)=>this.stopLiveLogLoad(e)} >
+                    Stop Live Update
                 </Button>
             </div>
                 )

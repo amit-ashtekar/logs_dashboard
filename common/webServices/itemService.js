@@ -1,7 +1,7 @@
 /**
  * Created by amita on 3/18/2016.
  */
-import {receiveProducts,receiveProductsFail,getAddedCartItem,receiveLogsLive} from '../actions/itemActions';
+import {receiveProducts,receiveProductsFail,getAddedCartItem,receiveLogsLive,receiveLiveLogHandler} from '../actions/itemActions';
 import {logEventsConfig} from '../awsConfig/config.js'
 import Rx from "rxjs";
 
@@ -90,7 +90,9 @@ export function getLiveLogs(){
                 getLogEvents.nextForwardToken = resJson.nextForwardToken;
                 getLogEvents.nextBackwardToken = resJson.nextBackwardToken;
                 localStorage.setItem("liveLogEvents", JSON.stringify(getLogEvents));
-                dispatch(receiveLogsLive(resJson))
+                dispatch(receiveLogsLive(resJson));
+                dispatch(receiveLiveLogHandler(subscription));
+
             }
         }
         function errorcb(err){

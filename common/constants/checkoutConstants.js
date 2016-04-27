@@ -12,7 +12,8 @@ export const actionObj=  createConstants(
     'RECEIVE_PRODUCTSFAIL',
     'GET_ADDED_CART_ITEMS',
     'REMOVE_FROM_CART',
-    'RECEIVE_LOGS_LIVE'
+    'RECEIVE_LOGS_LIVE',
+    "RECEIVE_LIVELOG_HANDLER"
 )
 
 

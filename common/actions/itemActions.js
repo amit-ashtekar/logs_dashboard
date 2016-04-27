@@ -3,7 +3,7 @@
  */
 import {actionObj } from '../constants/checkoutConstants';
 
-const {ADD_TO_CART,CHECKOUT_REQUEST,CHECKOUT_SUCCESS,CHECKOUT_FAILURE,RECEIVE_PRODUCTS,RECEIVE_PRODUCTSFAIL,GET_ADDED_CART_ITEMS,REMOVE_FROM_CART,RECEIVE_LOGS_LIVE}=actionObj;
+const {ADD_TO_CART,CHECKOUT_REQUEST,CHECKOUT_SUCCESS,CHECKOUT_FAILURE,RECEIVE_PRODUCTS,RECEIVE_PRODUCTSFAIL,GET_ADDED_CART_ITEMS,REMOVE_FROM_CART,RECEIVE_LOGS_LIVE,RECEIVE_LIVELOG_HANDLER}=actionObj;
 export function receiveProducts(items) {
     return {
          type:RECEIVE_PRODUCTS,
@@ -15,6 +15,7 @@ export function receiveLogsLive(items) {
     return {
         type:RECEIVE_LOGS_LIVE,
         products: items
+
     }
 }
 
@@ -24,6 +25,13 @@ export function receiveProductsFail(err){
         productError:err
     }
 }
+export function receiveLiveLogHandler(handler){
+    return {
+        type:RECEIVE_LIVELOG_HANDLER,
+        LiveLogHandler:handler
+    }
+}
+
 export function addItemToCart(itemId){
     return {
         type:ADD_TO_CART,

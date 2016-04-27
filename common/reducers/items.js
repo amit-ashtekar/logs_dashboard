@@ -28,6 +28,17 @@ export function Items(state = InitialState.items, action) {
             ]
     }
 }
+export function liveLogHandler(state = {}, action) {
+    switch (action.type) {
+        case "RECEIVE_LIVELOG_HANDLER":
+             return Object.assign({},state,{
+                 LiveLogHandler: action.LiveLogHandler
+        })
+
+        default:
+            return state;
+    }
+}
 
 export function AddedItemsCount(state = InitialState.addedItems.item, action) {
     switch (action.type) {
