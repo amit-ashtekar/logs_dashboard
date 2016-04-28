@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import * as actionCreators from 'common/actions';
 import * as loginactionCreators from 'common/webServices';
 import {Button, NavBrand, Nav, NavItem} from 'react-bootstrap';
+import { pushState } from 'redux-router';
 
 
 export class LoginView extends React.Component {
@@ -22,13 +23,26 @@ export class LoginView extends React.Component {
     debugger;
     var prp=nextProps;
   }
+     navigateTo(routeName){
 
+    }
+    successCB(resJson,dispatch$){
+        debugger;
+        localStorage.setItem("access_token",resJson.access_token);
+      //  LoginView.navigateTo('itemcontainer')
+       // return function(dispatch) {
+
+            dispatch$(pushState(null, "/itemcontainer"));
+       // }()
+
+
+    }
 
   handleClick(e) {
       e.preventDefault();
     const username = this.refs.username.value
     const password = this.refs.password.value
-      this.props.loginactions.login(username,password, 'redirectPath');
+      this.props.loginactions.login(username,password,this.successCB);
   }
 
   render () {

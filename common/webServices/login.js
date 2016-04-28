@@ -3,9 +3,9 @@
  */
 
 import {loginRequest,loginFail,loginSuccess,logout} from '../actions';
-import { pushState } from 'redux-router';
 
-export function login(username,password){
+
+export function login(username,password,successCB){
     return function (dispatch) {
         let config={
             method: 'POST',
@@ -26,14 +26,12 @@ export function login(username,password){
             dispatch(loginFail(resJson.message))
         }
         else{
-            console.log("resppnse: ",resJson)
-            localStorage.setItem("access_token",resJson.access_token)
-            //localStorage.setItem("token_type",resJson.token_type)
-            //localStorage.setItem("refresh_token",resJson.refresh_token)
-            //localStorage.setItem("scope",resJson.scope)
+            console.log("resppnse: ",resJson);
 
             dispatch(loginSuccess(resJson))
-            dispatch(pushState(null, '/itemcontainer'));
+
+                if(successCB)
+                successCB(resJson,dispatch);
         }
     }).catch(err=>{
         dispatch(loginFail({status:"403",message:err}));
