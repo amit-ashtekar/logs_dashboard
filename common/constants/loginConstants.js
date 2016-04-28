@@ -3,7 +3,7 @@
  */
 
 import {createConstants} from '../util';
-export  const constObj= createConstants(
+export const loginConstObj= createConstants(
     'LOGIN_REQUEST',
     'LOGIN_FAILURE',
     'LOGIN_SUCCESS',

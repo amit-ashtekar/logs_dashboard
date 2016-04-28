@@ -12,8 +12,31 @@ export default class ItemList extends React.Component {
     }
     onNextClicked(e,paginationAction){
         e.preventDefault();
-        this.props.itemAddAction(paginationAction)
+        var getLogEventsStorObj= JSON.parse( localStorage.getItem("getLogEvents"));
+        this.props.itemAddAction(paginationAction,getLogEventsStorObj,this.itemAddActionSuccesscb);
         // alert('onAddToCartClicked called')
+    }
+    itemAddActionSuccesscb(resJson){
+        var getLogEvents={};
+        getLogEvents.nextForwardToken=resJson.nextForwardToken;
+        getLogEvents. nextBackwardToken=resJson. nextBackwardToken;
+        localStorage.setItem("getLogEvents",JSON.stringify(getLogEvents));
+    }
+     successcb(resJson){
+        if(resJson) {
+
+            console.log("getLogEvents: ", resJson)
+            var getLogEvents = {};
+            getLogEvents.nextForwardToken = resJson.nextForwardToken;
+            getLogEvents.nextBackwardToken = resJson.nextBackwardToken;
+            localStorage.setItem("liveLogEvents", JSON.stringify(getLogEvents));
+
+
+        }
+    }
+     errorcb(err){
+        console.log('LiveLogError:', err);
+
     }
 
 
@@ -25,7 +48,8 @@ export default class ItemList extends React.Component {
        }
         else {
            this.value = true;
-           this.props.liveLogAction()
+           var getLogEventsStorObj= JSON.parse( localStorage.getItem("liveLogEvents"));
+           this.props.liveLogAction(getLogEventsStorObj,this.successcb,this.errorcb);
 
        }
     }
