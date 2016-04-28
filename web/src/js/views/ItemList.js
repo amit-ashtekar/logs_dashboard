@@ -15,6 +15,22 @@ export default class ItemList extends React.Component {
         this.props.itemAddAction(paginationAction)
         // alert('onAddToCartClicked called')
     }
+     successcb(resJson){
+        if(resJson) {
+
+            console.log("getLogEvents: ", resJson)
+            var getLogEvents = {};
+            getLogEvents.nextForwardToken = resJson.nextForwardToken;
+            getLogEvents.nextBackwardToken = resJson.nextBackwardToken;
+            localStorage.setItem("liveLogEvents", JSON.stringify(getLogEvents));
+
+
+        }
+    }
+     errorcb(err){
+        console.log('LiveLogError:', err);
+
+    }
 
 
     toggle(e) {
@@ -25,7 +41,8 @@ export default class ItemList extends React.Component {
        }
         else {
            this.value = true;
-           this.props.liveLogAction()
+           var getLogEventsStorObj= JSON.parse( localStorage.getItem("liveLogEvents"));
+           this.props.liveLogAction(getLogEventsStorObj,this.successcb,this.errorcb);
 
        }
     }

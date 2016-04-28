@@ -50,10 +50,10 @@ export function getItems(paginationAction){
 
 
 
-export function getLiveLogs(){
+export function getLiveLogs(getLogEventsStorObj,successcb,errorcb){
     // return fetchItems(receiveProducts,receiveProductsFail)
     return function (dispatch) {
-        var getLogEventsStorObj= JSON.parse( localStorage.getItem("liveLogEvents"));
+
 
         if(getLogEventsStorObj ){
             logEventsConfig.nextToken=getLogEventsStorObj.nextForwardToken;
@@ -73,32 +73,21 @@ export function getLiveLogs(){
             .repeat()
             .subscribe(
             function (resJson) {
+                if(successcb)
+                    dispatch(receiveLogsLive(resJson));
+                dispatch(receiveLiveLogHandler(subscription));
                 successcb(resJson)
             },
             function (err) {
+                if(errorcb)
+                    dispatch(receiveProductsFail(err));
                errorcb(err);
             },
             function () {
                 console.log('LiveLogError-Completed');
             });
 
-        function successcb(resJson){
-            if(resJson) {
 
-                console.log("getLogEvents: ", resJson)
-                var getLogEvents = {};
-                getLogEvents.nextForwardToken = resJson.nextForwardToken;
-                getLogEvents.nextBackwardToken = resJson.nextBackwardToken;
-                localStorage.setItem("liveLogEvents", JSON.stringify(getLogEvents));
-                dispatch(receiveLogsLive(resJson));
-                dispatch(receiveLiveLogHandler(subscription));
-
-            }
-        }
-        function errorcb(err){
-            console.log('LiveLogError:', err);
-            dispatch(receiveProductsFail(err));
-        }
 
 
 
