@@ -5,10 +5,9 @@ import {receiveProducts,receiveProductsFail,getAddedCartItem,receiveLogsLive,rec
 import {logEventsConfig} from '../awsConfig/config.js'
 import Rx from "rxjs";
 
-export function getItems(paginationAction){
-   // return fetchItems(receiveProducts,receiveProductsFail)
+export function getItems(paginationAction,getLogEventsStorObj,successcb){
+
     return function (dispatch) {
-       var getLogEventsStorObj= JSON.parse( localStorage.getItem("getLogEvents"));
 
         if(getLogEventsStorObj && paginationAction==="Next" ){
             logEventsConfig.nextToken=getLogEventsStorObj.nextForwardToken;
@@ -24,19 +23,9 @@ export function getItems(paginationAction){
         return fetch('http://localhost:3001/getLogEvents/',config)
                 .then(res=> res.json())
         .then(resJson=> {
-            console.log("getLogEvents: ",resJson)
-        var getLogEvents={};
-        getLogEvents.nextForwardToken=resJson.nextForwardToken;
-        getLogEvents. nextBackwardToken=resJson. nextBackwardToken;
-        localStorage.setItem("getLogEvents",JSON.stringify(getLogEvents));
-        //if(!itemArr) {
+            console.log("getLogEvents: ",resJson);
         dispatch(receiveProducts(resJson))
-        //}
-        //else{
-        //  dispatch(receiveProducts(itemArr,resJson))
-        //}
-
-
+                successcb(resJson);
 
     }).catch(err=>{
         debugger;
@@ -49,11 +38,9 @@ export function getItems(paginationAction){
 }
 
 
-
 export function getLiveLogs(getLogEventsStorObj,successcb,errorcb){
-    // return fetchItems(receiveProducts,receiveProductsFail)
-    return function (dispatch) {
 
+    return function (dispatch) {
 
         if(getLogEventsStorObj ){
             logEventsConfig.nextToken=getLogEventsStorObj.nextForwardToken;
@@ -86,10 +73,5 @@ export function getLiveLogs(getLogEventsStorObj,successcb,errorcb){
             function () {
                 console.log('LiveLogError-Completed');
             });
-
-
-
-
-
     }
 }

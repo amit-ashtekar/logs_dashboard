@@ -19,8 +19,16 @@ export default class StreamListContainer extends React.Component {
         e.preventDefault();
         console.log("selected Stream:",e.target.value);
         this.props.streamactions.selectedStream(e.target.value);
-        if(e.target.value!=="select")
-        this.props.itemactions.getItems();
+        if(e.target.value!=="select") {
+            var getLogEventsStorObj= JSON.parse( localStorage.getItem("getLogEvents"));
+            this.props.itemactions.getItems(undefined, getLogEventsStorObj,this.successcb);
+        }
+    }
+    successcb(resJson){
+        var getLogEvents={};
+        getLogEvents.nextForwardToken=resJson.nextForwardToken;
+        getLogEvents. nextBackwardToken=resJson. nextBackwardToken;
+        localStorage.setItem("getLogEvents",JSON.stringify(getLogEvents));
     }
     render() {
         const { streams } = this.props;
