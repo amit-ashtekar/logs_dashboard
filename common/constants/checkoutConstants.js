@@ -13,7 +13,8 @@ export const actionObj=  createConstants(
     'GET_ADDED_CART_ITEMS',
     'REMOVE_FROM_CART',
     'RECEIVE_LOGS_LIVE',
-    "RECEIVE_LIVELOG_HANDLER"
+    'RECEIVE_LIVELOG_HANDLER',
+    'RECEIVE_FILTERED_LOGS'
 )
 
 

@@ -16,6 +16,11 @@ export function Items(state = InitialState.items, action) {
                 ...state.slice(state.length),
                 action.products
             ]
+        case "RECEIVE_FILTERED_LOGS":
+            return[
+                ...state.slice(state.length),
+                action.products
+            ]
         case "RECEIVE_LOGS_LIVE":
             return[
                 ...state,

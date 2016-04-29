@@ -8,6 +8,7 @@ export const urlobj = {
     getLiveLogs:'http://localhost:3001/getLogEvents/',
     login:'http://localhost:3001/auth/getToken',
     getGroups:'http://localhost:3001/getGroups/',
-    getStreams:'http://localhost:3001/getStreams/'
+    getStreams:'http://localhost:3001/getStreams/',
+    getFilterLogEvents:'http://localhost:3001/getFilterLogEvents/'
 
 }

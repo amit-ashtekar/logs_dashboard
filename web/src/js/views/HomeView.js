@@ -33,6 +33,12 @@ export default class HomeView extends React.Component {
         <a className="right carousel-control" href="#carousel-example-generic" data-slide="next">
         <span className="icon-next"></span>
         </a>
+            <h2 className="brand-before">
+                <small>Welcome to</small>
+            </h2>
+            <h1 className="brand-name">Logs Dashboard</h1>
+            <hr className="tagline-divider"/>
+
         </div>
 
         </div>

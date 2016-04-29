@@ -14,16 +14,11 @@ export let logEventsConfig = {
 };
 
 
-export let filterLogEventsParams = {
+export let filterLogParams = {
     logGroupName: 'US-QA', /* required */
-    filterPattern: '',
-
-
-    interleaved: true || false,
-    limit: 3,
+    interleaved: true,
     logStreamNames: [
         'tomcat'
-
     ],
     nextToken:null
 

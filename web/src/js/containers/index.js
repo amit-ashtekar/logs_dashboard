@@ -3,6 +3,7 @@ import Root from './Root';
 import ItemContainer from './ItemsContainer';
 import GroupListContainer from './groupList';
 import StreamListContainer from './streamList.js';
+import FilterContainer from './filterContainer.js';
 
 
 export{
@@ -10,5 +11,6 @@ export{
     Root,
     ItemContainer,
     GroupListContainer,
-    StreamListContainer
+    StreamListContainer,
+    FilterContainer
     }
