@@ -1,0 +1,19 @@
+{
+  "name": "mobile",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node node_modules/react-native/local-cli/cli.js start",
+    "preinstall": "npm install ../common/",
+    "clean:babelrc": "find ./node_modules -name react-packager -prune -o -name '.babelrc' -print | xargs rm -f",
+    "postinstall": "npm run clean:babelrc"
+  },
+  "dependencies": {
+    "react": "^0.14.8",
+    "react-native": "^0.22.2",
+    "react-redux": "^4.4.2",
+    "redux-logger": "^2.5.0",
+    "redux-thunk": "^1.0.3",
+    "redux": "^3.4.0"
+  }
+}
