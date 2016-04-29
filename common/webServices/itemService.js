@@ -2,7 +2,7 @@
  * Created by amita on 3/18/2016.
  */
 import {receiveProducts,receiveProductsFail,getAddedCartItem,receiveLogsLive,receiveLiveLogHandler} from '../actions/itemActions';
-import {logEventsConfig} from '../awsConfig/config.js'
+import {logEventsConfig} from '../AWSConfig/config.js'
 import Rx from "rxjs";
 
 export function getItems(paginationAction,getLogEventsStorObj,successcb){

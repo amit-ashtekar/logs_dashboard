@@ -6,7 +6,7 @@ import React, {PropTypes } from 'react';
 import {Col} from 'react-bootstrap'
 import {ItemList} from '../views'
 import {Item} from '../views'
-import {GroupListContainer,StreamListContainer} from './index.js'
+import {GroupListContainer,StreamListContainer,FilterContainer} from './index.js'
 import {bindActionCreators} from 'redux';
 import * as itemActionCreators from 'common/webServices/itemService';
 import * as itemAddActionCreators from 'common/actions/itemActions';
@@ -31,7 +31,7 @@ export default class ItemContainer extends React.Component {
         const { products,addeditemsId } = this.props
         return (
                 <div>
-
+<FilterContainer />
                 <div className="box">
             <div className="row">
 <Col xs={12} sm={12} md={6}>

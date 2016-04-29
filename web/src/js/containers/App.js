@@ -20,7 +20,7 @@ export default class CoreLayout extends React.Component {
 
         return (
             <div>
-            <div className="brand">Logs-Dashboard</div>
+
 
 
         <nav className="navbar navbar-default" role="navigation">

@@ -10,6 +10,24 @@ var AWS = require('aws-sdk');
 AWS.config.update({region:'us-west-2'});
 var cloudwatchlogs = new AWS.CloudWatchLogs();
 
+var filterLogEventsParams = {
+    logGroupName: 'US-QA', /* required */
+    filterPattern: 'EGPDocumentServiceImpl',
+
+
+    interleaved: true || false,
+    limit: 3,
+    logStreamNames: [
+        'tomcat'
+
+    ],
+    nextToken:null
+
+};
+cloudwatchlogs.filterLogEvents(filterLogEventsParams, function(err, data) {
+    if (err) console.log(err, err.stack); // an error occurred
+    else     console.log("filterLogEventsParams",data);           // successful response
+});
 
 
 app.post('/auth/getToken',function(req,res){
