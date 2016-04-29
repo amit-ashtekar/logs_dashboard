@@ -3,7 +3,8 @@
  */
 import React, { PropTypes } from 'react'
 import {Button} from 'react-bootstrap';
-import Switch from 'react-toggle-switch'
+import Switch from 'react-toggle-switch';
+import {urlobj} from 'common/apiurls'
 
 export default class ItemList extends React.Component {
     constructor(props) {
@@ -49,7 +50,7 @@ export default class ItemList extends React.Component {
         else {
            this.value = true;
            var getLogEventsStorObj= JSON.parse( localStorage.getItem("liveLogEvents"));
-           this.props.liveLogAction(getLogEventsStorObj,this.successcb,this.errorcb);
+           this.props.liveLogAction(urlobj.getLiveLogs,getLogEventsStorObj,this.successcb,this.errorcb);
 
        }
     }

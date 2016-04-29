@@ -12,7 +12,7 @@ var cloudwatchlogs = new AWS.CloudWatchLogs();
 
 var filterLogEventsParams = {
     logGroupName: 'US-QA', /* required */
-    filterPattern: 'EGPDocumentServiceImpl',
+    filterPattern: '',
 
 
     interleaved: true || false,
@@ -27,6 +27,25 @@ var filterLogEventsParams = {
 cloudwatchlogs.filterLogEvents(filterLogEventsParams, function(err, data) {
     if (err) console.log(err, err.stack); // an error occurred
     else     console.log("filterLogEventsParams",data);           // successful response
+});
+
+app.get('/getFilterLogEvents/',function(req,res){
+
+    var token=req.headers['authorization'];
+    var filterLogEventsParams=req.headers['filterLogEventsParams'];
+    if(!token){
+        res.sendStatus(401);
+    }
+    else{
+
+        cloudwatchlogs.filterLogEvents(filterLogEventsParams, function(err, data) {
+            if (err) console.log(err, err.stack); // an error occurred
+            else {
+                console.log("filterLogEventsParams",data);
+                res.status(200).json(data)
+            }// successful response
+        });
+    }
 });
 
 
