@@ -1,8 +1,9 @@
 /**
  * Created by amita on 4/20/2016.
  */
-import {constObj} from '../constants/loginConstants.js'
-const {LOGIN_REQUEST,LOGIN_FAILURE,LOGIN_SUCCESS,LOGOUT}=constObj;
+
+import {loginConstObj} from '../constants/loginConstants.js'
+const {LOGIN_REQUEST,LOGIN_FAILURE,LOGIN_SUCCESS,LOGOUT}=loginConstObj;
 export function loginRequest(){
     return {
         type:LOGIN_REQUEST

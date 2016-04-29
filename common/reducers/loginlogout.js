@@ -2,8 +2,8 @@
  * Created by amita on 3/15/2016.
  */
 
-import {LOGIN_REQUEST,LOGIN_FAILURE,LOGIN_SUCCESS,LOGOUT} from '../constants/loginConstants.js'
-
+import {loginConstObj} from '../constants/loginConstants.js'
+const {LOGIN_REQUEST,LOGIN_FAILURE,LOGIN_SUCCESS,LOGOUT}=loginConstObj;
 export function login(state={ isAuthenticated: false, token: null,message:''},action){
 
     switch(action.type){
