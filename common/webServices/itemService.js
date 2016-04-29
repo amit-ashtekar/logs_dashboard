@@ -5,7 +5,7 @@ import {receiveProducts,receiveProductsFail,getAddedCartItem,receiveLogsLive,rec
 import {logEventsConfig} from '../awsConfig/config.js'
 import Rx from "rxjs";
 
-export function getItems(paginationAction,getLogEventsStorObj,successcb){
+export function getItems(url,paginationAction,getLogEventsStorObj,successcb){
 
     return function (dispatch) {
 
@@ -20,7 +20,7 @@ export function getItems(paginationAction,getLogEventsStorObj,successcb){
             headers: {  'Content-Type': 'application/json', 'Accept': 'application/json','authorization':'151561vdfvdbdbdb1561fdbdf','Logeventsparam':JSON.stringify(logEventsConfig) }
         };
 
-        return fetch('http://localhost:3001/getLogEvents/',config)
+        return fetch(url,config)
                 .then(res=> res.json())
         .then(resJson=> {
             console.log("getLogEvents: ",resJson);
@@ -38,7 +38,7 @@ export function getItems(paginationAction,getLogEventsStorObj,successcb){
 }
 
 
-export function getLiveLogs(getLogEventsStorObj,successcb,errorcb){
+export function getLiveLogs(url,getLogEventsStorObj,successcb,errorcb){
 
     return function (dispatch) {
 
@@ -51,7 +51,7 @@ export function getLiveLogs(getLogEventsStorObj,successcb,errorcb){
             headers: {  'Content-Type': 'application/json', 'Accept': 'application/json','authorization':'151561vdfvdbdbdb1561fdbdf','Logeventsparam':JSON.stringify(logEventsConfig) }
         };
         var service = Rx.Observable.defer(function () {
-            return  fetch('http://localhost:3001/getLogEvents/',config) .then(res=> res.json())
+            return  fetch(url,config) .then(res=> res.json())
         });
         var fetchInterval = Rx.Observable.empty().delay(3000);
 

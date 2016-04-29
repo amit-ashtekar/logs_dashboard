@@ -14,5 +14,18 @@ export let logEventsConfig = {
 };
 
 
+export let filterLogEventsParams = {
+    logGroupName: 'US-QA', /* required */
+    filterPattern: '',
 
+
+    interleaved: true || false,
+    limit: 3,
+    logStreamNames: [
+        'tomcat'
+
+    ],
+    nextToken:null
+
+};
 

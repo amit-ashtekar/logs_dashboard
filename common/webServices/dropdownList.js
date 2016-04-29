@@ -4,7 +4,7 @@
 
 import {getGroupList,groupListSuccess,groupListFail,selectedGroup,getStreamList,streamListSuccess,streamListFail,selectedStream} from '../actions/dropdown.js';
 
-export function getGroups(){
+export function getGroups(url){
     // return fetchItems(receiveProducts,receiveProductsFail)
     return function (dispatch) {
 
@@ -13,7 +13,7 @@ export function getGroups(){
             headers: {  'Content-Type': 'application/json', 'Accept': 'application/json','authorization':'151561vdfvdbdbdb1561fdbdf' }
         };
         dispatch(getGroupList());
-        return fetch('http://localhost:3001/getGroups/',config)
+        return fetch(url,config)
                 .then(res=> res.json())
         .then(resJson=> {
             console.log("getGroups: ",resJson)
@@ -30,7 +30,7 @@ export function getGroups(){
 }
 }
 
-export function getStreams(){
+export function getStreams(url){
     // return fetchItems(receiveProducts,receiveProductsFail)
     return function (dispatch) {
 
@@ -39,7 +39,7 @@ export function getStreams(){
             headers: {  'Content-Type': 'application/json', 'Accept': 'application/json','authorization':'151561vdfvdbdbdb1561fdbdf' }
         };
         dispatch(getStreamList());
-        return fetch('http://localhost:3001/getStreams/',config)
+        return fetch(url,config)
                 .then(res=> res.json())
         .then(resJson=> {
             console.log("getStreams: ",resJson)

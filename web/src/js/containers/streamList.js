@@ -10,10 +10,11 @@ import * as groupWebActionCreators from 'common/webServices/dropdownList.js';
 import * as groupActionCreators from 'common/actions/dropdown.js';
 import * as itemActionCreators from 'common/webServices/itemService';
 import {connect} from 'react-redux';
+import {urlobj} from 'common/apiurls';
 
 export default class StreamListContainer extends React.Component {
     componentWillMount (){
-        this.props.streamwebactions.getStreams();
+        this.props.streamwebactions.getStreams(urlobj.getStreams);
     }
     onStreamSelected(e){
         e.preventDefault();
@@ -21,7 +22,7 @@ export default class StreamListContainer extends React.Component {
         this.props.streamactions.selectedStream(e.target.value);
         if(e.target.value!=="select") {
             var getLogEventsStorObj= JSON.parse( localStorage.getItem("getLogEvents"));
-            this.props.itemactions.getItems(undefined, getLogEventsStorObj,this.successcb);
+            this.props.itemactions.getItems(urlobj.getItems,undefined, getLogEventsStorObj,this.successcb);
         }
     }
     successcb(resJson){
