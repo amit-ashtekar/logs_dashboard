@@ -14,7 +14,7 @@ export default class ItemList extends React.Component {
     onNextClicked(e,paginationAction){
         e.preventDefault();
         var getLogEventsStorObj= JSON.parse( localStorage.getItem("getLogEvents"));
-        this.props.itemAddAction(paginationAction,getLogEventsStorObj,this.itemAddActionSuccesscb);
+        this.props.itemAddAction(urlobj.getItems, paginationAction,getLogEventsStorObj,this.itemAddActionSuccesscb);
         // alert('onAddToCartClicked called')
     }
     itemAddActionSuccesscb(resJson){
