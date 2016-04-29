@@ -14,7 +14,7 @@ import {urlobj} from 'common/apiurls';
 
 export default class StreamListContainer extends React.Component {
     componentWillMount (){
-        this.props.streamwebactions.getStreams();
+        this.props.streamwebactions.getStreams(urlobj.getStreams);
     }
     onStreamSelected(e){
         e.preventDefault();

@@ -8,10 +8,11 @@ import {Input} from "react-bootstrap";
 import * as groupWebActionCreators from 'common/webServices/dropdownList.js';
 import * as groupActionCreators from 'common/actions/dropdown.js';
 import {connect} from 'react-redux';
+import {urlobj} from 'common/apiurls';
 
 export default class GroupListContainer extends React.Component {
     componentWillMount (){
-        this.props.groupwebactions.getGroups();
+        this.props.groupwebactions.getGroups(urlobj.getGroups);
     }
     onGroupSelected(e,obj){
         e.preventDefault();
