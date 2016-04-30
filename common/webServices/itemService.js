@@ -1,7 +1,7 @@
 /**
  * Created by amita on 3/18/2016.
  */
-import {receiveProducts,receiveProductsFail,getAddedCartItem,receiveLogsLive,receiveLiveLogHandler} from '../actions/itemActions';
+import {receiveProducts,receiveProductsFail,getAddedCartItem,receiveLogsLive,receiveLiveLogHandler,receiveFilteredLogs} from '../actions/itemActions';
 import {logEventsConfig} from '../AWSConfig/config.js'
 import Rx from "rxjs";
 
@@ -73,5 +73,32 @@ export function getLiveLogs(url,getLogEventsStorObj,successcb,errorcb){
             function () {
                 console.log('LiveLogError-Completed');
             });
+    }
+}
+
+export function getFilteredLogs(url,paginationAction,filteredLogObj,successcb){
+
+    return function (dispatch) {
+
+
+        let config={
+            method: 'GET',
+            headers: {  'Content-Type': 'application/json', 'Accept': 'application/json','authorization':'151561vdfvdbdbdb1561fdbdf','filterLogEventsParams':JSON.stringify(filteredLogObj) }
+        };
+
+        return fetch(url,config)
+            .then(res=> res.json())
+            .then(resJson=> {
+                console.log("getLogEvents: ",resJson);
+                dispatch(receiveFilteredLogs(resJson))
+                successcb(resJson);
+
+            }).catch(err=>{
+                debugger;
+
+                dispatch(receiveProductsFail(err));
+
+            })
+
     }
 }
