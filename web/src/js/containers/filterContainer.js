@@ -12,18 +12,22 @@ import * as itemActionCreators from 'common/webServices/itemService';
 import {connect} from 'react-redux';
 import {urlobj} from 'common/apiurls';
 import {filterLogParams} from 'common/AWSConfig/config.js';
+import DatePicker from 'react-datepicker';
+import moment from 'moment';
 
 export default class FilterContainer extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             filterPattern: '',
+            startTime:moment(new Date().getTime()),
+            endTime:moment(new Date().getTime()),
             value:'0'
 
         };
     }
     componentWillMount (){
-        this.props.streamwebactions.getStreams();
+
     }
     onSearch(e){
         e.preventDefault();
@@ -46,6 +50,32 @@ export default class FilterContainer extends React.Component {
         this.setState({ value: event.target.value });
 
     }
+    handleDateChange(e,date){
+        //this.setState({startTime: event.target.value});
+        if(e  !==null) {
+            this.setState({startTime: moment(e._d.getTime())});
+            filterLogParams.startTime = e._d.getTime();
+            console.log("startTime :", filterLogParams.startTime);
+        }
+        else{
+            this.setState({startTime: 0});
+            filterLogParams.startTime = 0;
+            console.log("startTime :", filterLogParams.startTime);
+        }
+    }
+    handleEndDateChange(e,date){
+        //this.setState({startTime: event.target.value});
+        if(e  !==null) {
+            this.setState({endTime: moment(e._d.getTime())});
+            filterLogParams.endTime = e._d.getTime();
+            console.log("endTime :", filterLogParams.endTime);
+        }
+        else{
+            this.setState({endTime: 0});
+            filterLogParams.endTime = 0;
+            console.log("endTime :", filterLogParams.endTime);
+        }
+    }
     successcb(resJson){
 
     }
@@ -55,30 +85,53 @@ export default class FilterContainer extends React.Component {
         return (
 
                 <div className="row">
+
                     <Col xs={12} sm={12} md={6}>
             <Input type="select"
                    placeholder="Set Filter"
                    onChange={(e)=>this.handleSelect(e)}>
                 <option value="select">Select Stream</option>
                 <option value="1">Filter Pattern</option>
+                <option value="2">Start Time</option>
+                <option value="3">End Time</option>
 
 
 
             </Input>
-                      </Col>  <Col xs={10} sm={10} md={4}>
+                      </Col>
+                    <Col xs={10} sm={10} md={6}>
+                    <div className="input-group add-on">
+
                 { this.state.value==="1" ? <Input type="text"  value={this.state.filterPattern}
                                                   onChange={(e)=>this.handleChange(e)}>
 
                 </Input> : null }
                     { this.state.value==="0" ? <label className="form-control" >Enter Filtered Value</label> : null }
-               </Col>
+                    { this.state.value==="2" ?         <DatePicker
+                        placeholderText="Click to select a date"
+                        selected={this.state.startTime}
+                        onChange={(e,date)=>this.handleDateChange(e,date)}
+                        className='form-control'>
+                    </DatePicker> : null }
+                    { this.state.value==="3" ?         <DatePicker
+                        placeholderText="Click to select a date"
+                        selected={this.state.endTime}
+                        onChange={(e,date)=>this.handleEndDateChange(e,date)}
+                        className='form-control'>
+                    </DatePicker> : null }
 
-                <Col xs={2} sm={2} md={2}>
+
+
+
+                    <div className="input-group-btn">
             <button type="button" className="btn btn-default"
                 onClick={(e)=>this.onSearch(e)}>
                 <Glyphicon glyph="search" />
             </button>
-        </Col>
+                        </div>
+                    </div>
+                    </Col>
+
 
                 </div>
         )
@@ -86,14 +139,13 @@ export default class FilterContainer extends React.Component {
 }
 const mapStateToProps = (state) => ({
 
-    streams:state.streams
+
 
 });
 const mapDispatchToProps = (dispatch) => ({
 
-    streamactions:bindActionCreators(groupActionCreators, dispatch),
-    streamwebactions:bindActionCreators(groupWebActionCreators, dispatch),
-    itemactions : bindActionCreators(itemActionCreators, dispatch),
+
+    itemactions : bindActionCreators(itemActionCreators, dispatch)
 })
 
 
