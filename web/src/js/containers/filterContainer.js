@@ -98,7 +98,10 @@ export default class FilterContainer extends React.Component {
 
 
             </Input>
-                      </Col>  <Col xs={10} sm={10} md={4}>
+                      </Col>
+                    <Col xs={10} sm={10} md={6}>
+                    <div className="input-group add-on">
+
                 { this.state.value==="1" ? <Input type="text"  value={this.state.filterPattern}
                                                   onChange={(e)=>this.handleChange(e)}>
 
@@ -117,14 +120,18 @@ export default class FilterContainer extends React.Component {
                         className='form-control'>
                     </DatePicker> : null }
 
-               </Col>
 
-                <Col xs={2} sm={2} md={2}>
+
+
+                    <div className="input-group-btn">
             <button type="button" className="btn btn-default"
                 onClick={(e)=>this.onSearch(e)}>
                 <Glyphicon glyph="search" />
             </button>
-        </Col>
+                        </div>
+                    </div>
+                    </Col>
+
 
                 </div>
         )

@@ -10,6 +10,7 @@ import {GroupListContainer,StreamListContainer,FilterContainer} from './index.js
 import {bindActionCreators} from 'redux';
 import * as itemActionCreators from 'common/webServices/itemService';
 import * as itemAddActionCreators from 'common/actions/itemActions';
+import Loader from 'react-loader';
 
 
 import {connect} from 'react-redux';
@@ -43,6 +44,7 @@ export default class ItemContainer extends React.Component {
         </div>
 
         <div className="row">
+            <Loader loaded={false}>
         <Col xs={12} sm={12} md={12}>
             <ItemList
         itemAddAction={this.props.itemactions.getItems}
@@ -59,7 +61,9 @@ indexkey={i}
 )
 )}
 </ItemList>
+
     </Col>
+            </Loader>
     </div>
     </div>
     </div>
