@@ -21,6 +21,7 @@ export default class FilterContainer extends React.Component {
         this.state = {
             filterPattern: '',
             startTime:moment(new Date().getTime()),
+            endTime:moment(new Date().getTime()),
             value:'0'
 
         };
@@ -62,6 +63,19 @@ export default class FilterContainer extends React.Component {
             console.log("startTime :", filterLogParams.startTime);
         }
     }
+    handleEndDateChange(e,date){
+        //this.setState({startTime: event.target.value});
+        if(e  !==null) {
+            this.setState({endTime: moment(e._d.getTime())});
+            filterLogParams.endTime = e._d.getTime();
+            console.log("endTime :", filterLogParams.endTime);
+        }
+        else{
+            this.setState({endTime: 0});
+            filterLogParams.endTime = 0;
+            console.log("endTime :", filterLogParams.endTime);
+        }
+    }
     successcb(resJson){
 
     }
@@ -79,6 +93,7 @@ export default class FilterContainer extends React.Component {
                 <option value="select">Select Stream</option>
                 <option value="1">Filter Pattern</option>
                 <option value="2">Start Time</option>
+                <option value="3">End Time</option>
 
 
 
@@ -93,6 +108,12 @@ export default class FilterContainer extends React.Component {
                         placeholderText="Click to select a date"
                         selected={this.state.startTime}
                         onChange={(e,date)=>this.handleDateChange(e,date)}
+                        className='form-control'>
+                    </DatePicker> : null }
+                    { this.state.value==="3" ?         <DatePicker
+                        placeholderText="Click to select a date"
+                        selected={this.state.endTime}
+                        onChange={(e,date)=>this.handleEndDateChange(e,date)}
                         className='form-control'>
                     </DatePicker> : null }
 
