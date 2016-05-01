@@ -12,18 +12,21 @@ import * as itemActionCreators from 'common/webServices/itemService';
 import {connect} from 'react-redux';
 import {urlobj} from 'common/apiurls';
 import {filterLogParams} from 'common/AWSConfig/config.js';
+import DatePicker from 'react-datepicker';
+import moment from 'moment';
 
 export default class FilterContainer extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             filterPattern: '',
+            startTime:moment(new Date().getTime()),
             value:'0'
 
         };
     }
     componentWillMount (){
-        this.props.streamwebactions.getStreams();
+
     }
     onSearch(e){
         e.preventDefault();
@@ -46,6 +49,19 @@ export default class FilterContainer extends React.Component {
         this.setState({ value: event.target.value });
 
     }
+    handleDateChange(e,date){
+        //this.setState({startTime: event.target.value});
+        if(e  !==null) {
+            this.setState({startTime: moment(e._d.getTime())});
+            filterLogParams.startTime = e._d.getTime();
+            console.log("startTime :", filterLogParams.startTime);
+        }
+        else{
+            this.setState({startTime: 0});
+            filterLogParams.startTime = 0;
+            console.log("startTime :", filterLogParams.startTime);
+        }
+    }
     successcb(resJson){
 
     }
@@ -55,12 +71,14 @@ export default class FilterContainer extends React.Component {
         return (
 
                 <div className="row">
+
                     <Col xs={12} sm={12} md={6}>
             <Input type="select"
                    placeholder="Set Filter"
                    onChange={(e)=>this.handleSelect(e)}>
                 <option value="select">Select Stream</option>
                 <option value="1">Filter Pattern</option>
+                <option value="2">Start Time</option>
 
 
 
@@ -71,6 +89,13 @@ export default class FilterContainer extends React.Component {
 
                 </Input> : null }
                     { this.state.value==="0" ? <label className="form-control" >Enter Filtered Value</label> : null }
+                    { this.state.value==="2" ?         <DatePicker
+                        placeholderText="Click to select a date"
+                        selected={this.state.startTime}
+                        onChange={(e,date)=>this.handleDateChange(e,date)}
+                        className='form-control'>
+                    </DatePicker> : null }
+
                </Col>
 
                 <Col xs={2} sm={2} md={2}>
@@ -86,14 +111,13 @@ export default class FilterContainer extends React.Component {
 }
 const mapStateToProps = (state) => ({
 
-    streams:state.streams
+
 
 });
 const mapDispatchToProps = (dispatch) => ({
 
-    streamactions:bindActionCreators(groupActionCreators, dispatch),
-    streamwebactions:bindActionCreators(groupWebActionCreators, dispatch),
-    itemactions : bindActionCreators(itemActionCreators, dispatch),
+
+    itemactions : bindActionCreators(itemActionCreators, dispatch)
 })
 
 

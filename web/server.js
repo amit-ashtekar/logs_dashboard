@@ -14,6 +14,7 @@ var filterLogEventsParams = {
     interleaved: true,
     logGroupName: 'US-QA', /* required */
     filterPattern: '',
+    startTime:null,
 
 
 
