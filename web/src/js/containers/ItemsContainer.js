@@ -34,15 +34,17 @@ export default class ItemContainer extends React.Component {
         return (
                 <div>
 <FilterContainer />
+                    <div className="box">
+                        <div className="row">
+                            <Col xs={12} sm={12} md={6}>
+                                <GroupListContainer />
+                            </Col>
+                            <Col xs={12} sm={12} md={6}>
+                                < StreamListContainer />
+                            </Col>
+                            </div>
+                                </div>
                 <div className="box">
-            <div className="row">
-<Col xs={12} sm={12} md={6}>
-        <GroupListContainer />
-            </Col>
-        <Col xs={12} sm={12} md={6}>
-        < StreamListContainer />
-        </Col>
-        </div>
 
         <div className="row">
             <Loader loaded={this.props.loader}>

@@ -62,11 +62,11 @@ export default class ItemList extends React.Component {
             <div>
             <div>{this.props.children}</div>
                 <div className="btn-toolbar">
-                <Button className="pull-left"
+                <Button className="pull-left" disabled={this.props.children.length===0 ? 'disabled' : ''}
                         onClick={(e)=>this.onNextClicked(e,"Prev")} >
                     Prev
                 </Button>
-<Button className="pull-left"
+<Button className="pull-left" disabled={this.props.children.length===0 ? 'disabled' : ''}
 onClick={(e)=>this.onNextClicked(e,"Next")} >
 Next
 </Button>
