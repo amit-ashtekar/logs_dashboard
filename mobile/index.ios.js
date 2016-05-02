@@ -53,7 +53,7 @@ class mobile extends Component {
       <React.NavigatorIOS
        style={styles.container}
        initialRoute={{
-         title: 'Home',
+         title: 'Logs Dashboard',
          component: Login,
          passProps: {listings: MOCKED_DATA}
        }}/>
