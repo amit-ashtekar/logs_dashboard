@@ -23,7 +23,8 @@ import {login} from 'common/webServices/login';
 import * as actionCreators from 'common/actions';
 import * as loginactionCreators from 'common/webServices';
 
- var Groups = require('./Groups')
+ // var Groups = require('./Groups')
+import Groups from './Groups'
 
 const styles = StyleSheet.create({
   container: {
@@ -33,7 +34,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#F5FCFF',
   },
   textEditInputs: {
-    height: 31,
+    height: 40,
     marginRight: 15,
     marginLeft: 15,
     marginTop: 10,
@@ -41,13 +42,13 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'gray',
     borderRadius: 8,
-    color: '#48BBEC',
+    color: 'black',
     },
   button: {
-    height: 31,
+    height: 40,
     marginTop: 10,
     backgroundColor: 'gray',
-    borderColor: '#48BBEC',
+    borderColor: 'black',
     borderWidth: 1,
     borderRadius: 8,
     marginBottom: 10,
@@ -57,6 +58,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     textAlign: 'center',
     margin: 10,
+    color: 'black'
   }
 });
 
