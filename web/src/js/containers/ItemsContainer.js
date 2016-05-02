@@ -44,7 +44,7 @@ export default class ItemContainer extends React.Component {
         </div>
 
         <div className="row">
-            <Loader loaded={false}>
+            <Loader loaded={this.props.loader}>
         <Col xs={12} sm={12} md={12}>
             <ItemList
         itemAddAction={this.props.itemactions.getItems}
@@ -74,11 +74,13 @@ const mapStateToProps = (state) => ({
     products   : state.Items,
     addeditemsId:state.AddedItemsCount,
     stream:state.stream,
-    LiveLogHandler:state.liveLogHandler
+    LiveLogHandler:state.liveLogHandler,
+    loader:state.loader.loaded
 });
 const mapDispatchToProps = (dispatch) => ({
       itemactions : bindActionCreators(itemActionCreators, dispatch),
-    itemAddActionCreators: bindActionCreators(itemAddActionCreators, dispatch)
+    itemAddActionCreators: bindActionCreators(itemAddActionCreators, dispatch),
+
 
 })
 
