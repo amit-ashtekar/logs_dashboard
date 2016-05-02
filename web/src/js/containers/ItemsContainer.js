@@ -10,6 +10,7 @@ import {GroupListContainer,StreamListContainer,FilterContainer} from './index.js
 import {bindActionCreators} from 'redux';
 import * as itemActionCreators from 'common/webServices/itemService';
 import * as itemAddActionCreators from 'common/actions/itemActions';
+import * as loaderActionCreators from 'common/actions/loader';
 import Loader from 'react-loader';
 
 
@@ -49,7 +50,8 @@ export default class ItemContainer extends React.Component {
             <ItemList
         itemAddAction={this.props.itemactions.getItems}
         liveLogAction={this.props.itemactions.getLiveLogs}
-        liveLogHandlr={this.props.LiveLogHandler}>
+        liveLogHandlr={this.props.LiveLogHandler}
+         loaderAction={ this.props.loaderAction}>
         {products && products.map(item=>
     item.events.map((product,i) =>
 <Item
@@ -80,6 +82,7 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
       itemactions : bindActionCreators(itemActionCreators, dispatch),
     itemAddActionCreators: bindActionCreators(itemAddActionCreators, dispatch),
+    loaderAction:bindActionCreators(loaderActionCreators,dispatch)
 
 
 })
