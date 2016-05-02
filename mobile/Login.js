@@ -18,7 +18,7 @@ import React, {
 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux'
-import {getGroups} from 'common/webServices/dropdownList';
+//import {getGroups} from 'common/webServices/dropdownList';
 import {login} from 'common/webServices/login';
 import * as actionCreators from 'common/actions';
 import * as loginactionCreators from 'common/webServices';
@@ -60,6 +60,7 @@ const styles = StyleSheet.create({
   }
 });
 
+var pused = false
 class Login extends Component {
 
   constructor(props) {
@@ -68,16 +69,21 @@ class Login extends Component {
      }
 
   componentWillReceiveProps(nextProps) {
-    console.log('nextProps printing....');
     if(nextProps.isAuthenticating === true) {
-       console.log("isAuthenticating...");
+      //  console.log("isAuthenticating...");
     } else if(nextProps.isAuthenticated === true) {
-      console.log("nextProps success, push");
-      this.props.navigator.push ({
-        title: 'Groups',
-        component: Groups
-      });
-    } else if(nextProps.isAuthenticated === false ) {
+      console.log("message " + nextProps.message);
+      console.log('isAuthenticated ' + nextProps.isAuthenticated);
+      console.log('isAuthenticating ' + nextProps.isAuthenticating);
+      if (pused == false) {
+        pused = true
+        this.props.navigator.push ({
+          title: 'Groups',
+          component: Groups
+        });
+      }
+    }
+    else if(nextProps.isAuthenticated === false ) {
       console.log("nextProps fails");
       // Show alert for failuer
       return (
@@ -91,13 +97,16 @@ class Login extends Component {
       );
     }
   }
+
+  successCB(resJson){
+    console.log(" in successCB");
+    console.log(resJson);
+  }
   onLogin() {
     console.log('in onLogin');
-      // this.props.navigator.push ({
-      //   title: 'Groups',
-      //   component: Groups
-      // });
-       this.props.loginactions.login('username','password');
+      pused = false
+      this.props.loginactions.login('username','password', this.successCB);
+      //this.props.loginactions.login('username','password');
   }
 
 
@@ -105,9 +114,11 @@ class Login extends Component {
     return (
       <View style={styles.container}>
       <TextInput style={styles.textEditInputs}
-        placeholder='User name'/>
+        placeholder='User name'
+        value = 'a'/>
         <TextInput style={styles.textEditInputs}
-          placeholder='Password'/>
+          placeholder='Password'
+          value = 'a'/>
         <TouchableHighlight style={styles.button}
         underlayColor='#99d9f4'
         onPress={this.onLogin.bind(this)}>
@@ -130,4 +141,3 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Login);
-//module.exports = Login;
