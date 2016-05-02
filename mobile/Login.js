@@ -18,12 +18,13 @@ import React, {
 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux'
-import {getGroups} from 'common/webServices/dropdownList';
+//import {getGroups} from 'common/webServices/dropdownList';
 import {login} from 'common/webServices/login';
 import * as actionCreators from 'common/actions';
 import * as loginactionCreators from 'common/webServices';
 
- var Groups = require('./Groups')
+ // var Groups = require('./Groups')
+import Groups from './Groups'
 
 const styles = StyleSheet.create({
   container: {
@@ -33,7 +34,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#F5FCFF',
   },
   textEditInputs: {
-    height: 31,
+    height: 40,
     marginRight: 15,
     marginLeft: 15,
     marginTop: 10,
@@ -41,13 +42,13 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'gray',
     borderRadius: 8,
-    color: '#48BBEC',
+    color: 'black',
     },
   button: {
-    height: 31,
+    height: 40,
     marginTop: 10,
     backgroundColor: 'gray',
-    borderColor: '#48BBEC',
+    borderColor: 'black',
     borderWidth: 1,
     borderRadius: 8,
     marginBottom: 10,
@@ -57,9 +58,11 @@ const styles = StyleSheet.create({
     fontSize: 20,
     textAlign: 'center',
     margin: 10,
+    color: 'black'
   }
 });
 
+var pused = false
 class Login extends Component {
 
   constructor(props) {
@@ -68,16 +71,21 @@ class Login extends Component {
      }
 
   componentWillReceiveProps(nextProps) {
-    console.log('nextProps printing....');
     if(nextProps.isAuthenticating === true) {
-       console.log("isAuthenticating...");
+      //  console.log("isAuthenticating...");
     } else if(nextProps.isAuthenticated === true) {
-      console.log("nextProps success, push");
-      this.props.navigator.push ({
-        title: 'Groups',
-        component: Groups
-      });
-    } else if(nextProps.isAuthenticated === false ) {
+      console.log("message " + nextProps.message);
+      console.log('isAuthenticated ' + nextProps.isAuthenticated);
+      console.log('isAuthenticating ' + nextProps.isAuthenticating);
+      if (pused == false) {
+        pused = true
+        this.props.navigator.push ({
+          title: 'Groups',
+          component: Groups
+        });
+      }
+    }
+    else if(nextProps.isAuthenticated === false ) {
       console.log("nextProps fails");
       // Show alert for failuer
       return (
@@ -91,13 +99,16 @@ class Login extends Component {
       );
     }
   }
+
+  successCB(resJson){
+    console.log(" in successCB");
+    console.log(resJson);
+  }
   onLogin() {
     console.log('in onLogin');
-      // this.props.navigator.push ({
-      //   title: 'Groups',
-      //   component: Groups
-      // });
-       this.props.loginactions.login('username','password');
+      pused = false
+      this.props.loginactions.login('username','password', this.successCB);
+      //this.props.loginactions.login('username','password');
   }
 
 
@@ -105,9 +116,11 @@ class Login extends Component {
     return (
       <View style={styles.container}>
       <TextInput style={styles.textEditInputs}
-        placeholder='User name'/>
+        placeholder='User name'
+        value = 'a'/>
         <TextInput style={styles.textEditInputs}
-          placeholder='Password'/>
+          placeholder='Password'
+          value = 'a'/>
         <TouchableHighlight style={styles.button}
         underlayColor='#99d9f4'
         onPress={this.onLogin.bind(this)}>
@@ -130,4 +143,3 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Login);
-//module.exports = Login;

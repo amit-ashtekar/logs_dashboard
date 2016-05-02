@@ -8,7 +8,14 @@
 
 var React = require('react-native')
 var Streams = require('./Streams')
-// import {getGroups} from 'common/webServices/dropdownList'
+
+import {PropTypes } from 'react';
+
+import {getGroups} from 'common/webServices/dropdownList'
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux'
+import * as groupWebActionCreators from 'common/webServices/dropdownList';
+import * as groupActionCreators from 'common/actions/dropdown';
 
  var {
    StyleSheet,
@@ -70,9 +77,29 @@ constructor(props) {
     price: 'fix';
   }
 
+  componentWillMount (){
+      this.props.groupwebactions.getGroups();
+      // getGroups();
+      console.log('this.props: ');
+      console.log(this.props);
+
+
+  }
+
+componentWillReceiveProps(nextProps) {
+  console.log('groups==> ');
+  console.log(nextProps.groups.groups);
+  MOCKED_DATA = nextProps.groups.groups
+}
+  onGroupSelected(e,obj){
+      // e.preventDefault();
+      console.log("selected Group:",e.target.value);
+  }
+
   componentDidMount() {
     this.fetchData();
   }
+
   fetchData() {
     //  getGroups()
     MOCKED_DATA =  ['MOCKED Group 1', 'MOCKED Group 2', 'Group 3', 'Group 4', 'Group 5'];
@@ -136,4 +163,13 @@ renderFooter() {
   }
 }
 
-module.exports = Groups;
+const mapStateToProps = (state) => ({
+    groups:state.groups
+});
+
+const mapDispatchToProps = (dispatch) => ({
+    groupactions:bindActionCreators(groupActionCreators, dispatch),
+    groupwebactions:bindActionCreators(groupWebActionCreators, dispatch)
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(Groups);
