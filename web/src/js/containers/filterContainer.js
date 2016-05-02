@@ -9,6 +9,7 @@ import {Input} from "react-bootstrap";
 import * as groupWebActionCreators from 'common/webServices/dropdownList.js';
 import * as groupActionCreators from 'common/actions/dropdown.js';
 import * as itemActionCreators from 'common/webServices/itemService';
+import * as loaderActionCreators from 'common/actions/loader';
 import {connect} from 'react-redux';
 import {urlobj} from 'common/apiurls';
 import {filterLogParams} from 'common/AWSConfig/config.js';
@@ -32,6 +33,7 @@ export default class FilterContainer extends React.Component {
     onSearch(e){
         e.preventDefault();
         console.log("filterLogParams:",filterLogParams);
+        this.props.loaderAction.startLoader();
         this.props.itemactions.getFilteredLogs(urlobj.getFilterLogEvents,undefined, filterLogParams,this.successcb);
     }
 
@@ -77,7 +79,7 @@ export default class FilterContainer extends React.Component {
         }
     }
     successcb(resJson){
-
+       // this.props.loaderAction.stopLoader();
     }
     render() {
         const { streams } = this.props;
@@ -145,7 +147,8 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
 
 
-    itemactions : bindActionCreators(itemActionCreators, dispatch)
+    itemactions : bindActionCreators(itemActionCreators, dispatch),
+    loaderAction:bindActionCreators(loaderActionCreators,dispatch)
 })
 
 
