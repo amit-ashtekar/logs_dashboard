@@ -92,7 +92,7 @@ export default class FilterContainer extends React.Component {
             <Input type="select"
                    placeholder="Set Filter"
                    onChange={(e)=>this.handleSelect(e)}>
-                <option value="select">Select Stream</option>
+                <option value="select">Select Filter Type</option>
                 <option value="1">Filter Pattern</option>
                 <option value="2">Start Time</option>
                 <option value="3">End Time</option>

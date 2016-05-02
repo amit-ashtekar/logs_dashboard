@@ -45,19 +45,32 @@ export function getLiveLogs(url,getLogEventsStorObj,successcb,errorcb){
         if(getLogEventsStorObj ){
             logEventsConfig.nextToken=getLogEventsStorObj.nextForwardToken;
         }
-
+console.log("logEventsConfig.nextToken",logEventsConfig.nextToken);
         var config={
             method: 'GET',
             headers: {  'Content-Type': 'application/json', 'Accept': 'application/json','authorization':'151561vdfvdbdbdb1561fdbdf','Logeventsparam':JSON.stringify(logEventsConfig) }
         };
         var service = Rx.Observable.defer(function () {
-            return  fetch(url,config) .then(res=> res.json())
+            return  fetch(url,config) .then(
+                    res=> res.json()
+            )
         });
         var fetchInterval = Rx.Observable.empty().delay(3000);
+
+
 
         var subscription = service
             .concat(fetchInterval)
             .repeat()
+            .do(function(item) {
+console.log("config.headers before:",config.headers );
+             //   logEventsConfig.nextToken = item.nextForwardToken;
+                var jobj=JSON.parse(config.headers.Logeventsparam) ;
+                jobj.nextToken=item.nextForwardToken;
+                config.headers.Logeventsparam=JSON.stringify(jobj);
+                console.log("config.headers after:",config.headers );
+
+            })
             .subscribe(
             function (resJson) {
                 if(successcb)

@@ -33,7 +33,7 @@ export default class ItemContainer extends React.Component {
         const { products,addeditemsId } = this.props
         return (
                 <div>
-<FilterContainer />
+
                     <div className="box">
                         <div className="row">
                             <Col xs={12} sm={12} md={6}>
@@ -42,8 +42,12 @@ export default class ItemContainer extends React.Component {
                             <Col xs={12} sm={12} md={6}>
                                 < StreamListContainer />
                             </Col>
+                            <Col xs={12} sm={12} md={12}>
+                                <FilterContainer />
+                            </Col>
                             </div>
                                 </div>
+
                 <div className="box">
 
         <div className="row">

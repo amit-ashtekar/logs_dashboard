@@ -59,6 +59,9 @@ hr {
 .brand-before {
   margin: 15px 0;
 }
+.brand-before-automargin {
+  margin: auto;
+}
 
 .brand-name {
   margin: 0;
