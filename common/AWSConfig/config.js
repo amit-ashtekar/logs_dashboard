@@ -7,10 +7,10 @@ export let logEventsConfig = {
     logGroupName: 'US-QA', /* required */
     logStreamName: 'tomcat', /* required */
 
-    limit: 4,
-    nextToken: null,
-    startFromHead: true || false,
-    startTime: 0
+    limit:10,
+    nextToken: null
+
+
 };
 
 

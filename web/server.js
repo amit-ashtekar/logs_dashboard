@@ -67,6 +67,7 @@ app.get('/getLogEvents/',function(req,res){
 
     var token=req.headers['authorization'];
     var logeventsparam=req.headers['logeventsparam'];
+    console.log("logeventsparam",JSON.stringify(logeventsparam));
     if(!token){
         res.sendStatus(401);
     }

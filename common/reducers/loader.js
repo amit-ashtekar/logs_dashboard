@@ -24,6 +24,7 @@ export function loader(state = InitialState, action) {
         case STOP_LOADER:
         case 'RECEIVE_FILTERED_LOGS':
             case 'RECEIVE_PRODUCTS':
+                case 'RECEIVE_LOGS_LIVE':
             return Object.assign({},state,{
                 loaded: true
             })

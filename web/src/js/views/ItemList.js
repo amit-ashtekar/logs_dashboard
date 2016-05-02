@@ -27,7 +27,7 @@ export default class ItemList extends React.Component {
      successcb(resJson){
         if(resJson) {
 
-            console.log("getLogEvents: ", resJson)
+            console.log("liveLogEvents: ", resJson)
             var getLogEvents = {};
             getLogEvents.nextForwardToken = resJson.nextForwardToken;
             getLogEvents.nextBackwardToken = resJson.nextBackwardToken;
@@ -51,6 +51,7 @@ export default class ItemList extends React.Component {
         else {
            this.value = true;
            var getLogEventsStorObj= JSON.parse( localStorage.getItem("liveLogEvents"));
+           //this.props.loaderAction.startLoader();
            this.props.liveLogAction(urlobj.getLiveLogs,getLogEventsStorObj,this.successcb,this.errorcb);
 
        }
@@ -70,10 +71,13 @@ export default class ItemList extends React.Component {
 onClick={(e)=>this.onNextClicked(e,"Next")} >
 Next
 </Button>
-                    </div>
-                <Switch value={false} on={false} onClick={(e)=>this.toggle(e)}>
+
+                    <h4 className="brand-before-automargin pull-right">
+                        <small>Live Logs</small>
+                    </h4><Switch value={false} on={false} onClick={(e)=>this.toggle(e)}>
 
                 </Switch>
+                </div>
 
                        </div>
                 )
