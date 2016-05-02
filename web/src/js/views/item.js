@@ -3,6 +3,8 @@
  */
 import React, {PropTypes } from 'react'
 import {Button} from 'react-bootstrap';
+import moment from 'moment';
+import {Col} from 'react-bootstrap'
 
 export default class Item extends React.Component {
     constructor(props) {
@@ -33,8 +35,13 @@ export default class Item extends React.Component {
       //  const {id, price, quantity, title } = this.props.product
 
         return (
-            <div className="box" style={this.getStyle(this.props.indexkey)?tdstyle:td1style}> {this.props.product.message }
-
+            <div className="box" style={this.getStyle(this.props.indexkey)?tdstyle:td1style}>
+                <Col xs={2} sm={2} md={2}>
+                    { moment.utc(this.props.product.timestamp).format('YYYY-MM-DD HH:mm:ss')}
+                </Col>
+                <Col xs={10} sm={10} md={10}>
+                    {this.props.product.message }
+                </Col>
                 </div>
             )
     }
