@@ -16,6 +16,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux'
 import * as groupWebActionCreators from 'common/webServices/dropdownList';
 import * as groupActionCreators from 'common/actions/dropdown';
+import {urlobj} from 'common/apiurls';
 
  var {
    StyleSheet,
@@ -61,13 +62,7 @@ class Groups extends Component {
 
 constructor(props) {
   super(props)
-
-  // var _dataSource  = new ListView.DataSource(
-  //      { rowHasChanged: (r1, r2) => r1.guid !== r2.guid,
-  //        sectionHeaderHasChanged: (s1, s2) => s1 !== s2
-  //      });
      this.state = {
-      // dataSource: _dataSource.cloneWithRows(MOCKED_DATA)
        dataSource: new ListView.DataSource({
           rowHasChanged: (row1, row2) => row1.guid !== row2.guid,
           sectionHeaderHasChanged: (s1, s2) => s1 !== s2
@@ -78,35 +73,19 @@ constructor(props) {
   }
 
   componentWillMount (){
-      this.props.groupwebactions.getGroups();
-      // getGroups();
+      this.props.groupwebactions.getGroups(urlobj.getGroups);
       console.log('this.props: ');
       console.log(this.props);
-
-
   }
 
 componentWillReceiveProps(nextProps) {
-  console.log('groups==> ');
-  console.log(nextProps.groups.groups);
-  MOCKED_DATA = nextProps.groups.groups
+  this.setState({
+    dataSource: this.state.dataSource.cloneWithRows(nextProps.groups.groups)
+  });
 }
   onGroupSelected(e,obj){
       // e.preventDefault();
       console.log("selected Group:",e.target.value);
-  }
-
-  componentDidMount() {
-    this.fetchData();
-  }
-
-  fetchData() {
-    //  getGroups()
-    MOCKED_DATA =  ['MOCKED Group 1', 'MOCKED Group 2', 'Group 3', 'Group 4', 'Group 5'];
-    // Fetch real data here and update data source
-    this.setState({
-      dataSource: this.state.dataSource.cloneWithRows(MOCKED_DATA)
-    });
   }
 
   rowPressed(guid) {
@@ -164,7 +143,7 @@ renderFooter() {
 }
 
 const mapStateToProps = (state) => ({
-    groups:state.groups
+    groups:state.groups.groups
 });
 
 const mapDispatchToProps = (dispatch) => ({
