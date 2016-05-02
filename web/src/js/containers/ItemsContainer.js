@@ -53,6 +53,13 @@ export default class ItemContainer extends React.Component {
         <div className="row">
             <Loader loaded={this.props.loader}>
         <Col xs={12} sm={12} md={12}>
+            {products.length>0 && <div className="container">
+                <p className="col-md-2 col-sm-2 col-xs-2">
+                    Time
+            </p>
+                <p className="col-md-10 col-sm-10 col-xs-10">
+                    Message
+                </p></div>}
             <ItemList
         itemAddAction={this.props.itemactions.getItems}
         liveLogAction={this.props.itemactions.getLiveLogs}
