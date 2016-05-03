@@ -6,8 +6,8 @@
 
  'user strict'
 
-var React = require('react-native')
-var Streams = require('./Streams')
+var React = require('react-native');
+import Streams from './Streams';
 
 import {PropTypes } from 'react';
 
@@ -149,6 +149,6 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
     groupactions:bindActionCreators(groupActionCreators, dispatch),
     groupwebactions:bindActionCreators(groupWebActionCreators, dispatch)
-})
+});
 
 export default connect(mapStateToProps, mapDispatchToProps)(Groups);

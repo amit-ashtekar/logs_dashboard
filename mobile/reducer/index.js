@@ -5,12 +5,14 @@ import {combineReducers} from 'redux';
 import {login} from 'common/reducers/loginlogout';
 import {Items,AddedItemsCount,GetCartAddedItems} from 'common/reducers/items'
 import {groups} from 'common/reducers/dropdown.js'
+import {streams} from 'common/reducers/dropdown.js'
 
 export default combineReducers({
  login,
  Items,
  AddedItemsCount,
  GetCartAddedItems,
- groups
+ groups,
+ streams
  // router:routerStateReducer
 })
