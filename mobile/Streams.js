@@ -6,8 +6,19 @@
 
  'user strict'
 
- var React = require('react-native')
- var SearchLogs = require('./SearchLogs')
+import SearchLogs from './SearchLogs';
+
+import {PropTypes } from 'react';
+import {getStreams} from 'common/webServices/dropdownList'
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux'
+import * as groupWebActionCreators from 'common/webServices/dropdownList';
+import * as groupActionCreators from 'common/actions/dropdown';
+import {urlobj} from 'common/apiurls';
+
+
+  var React = require('react-native')
+
 
  var {
    StyleSheet,
@@ -58,17 +69,22 @@ constructor(props) {
     price: 'fix';
   }
 
-  componentDidMount() {
-    this.fetchData();
-  }
-  fetchData() {
-    MOCKED_DATA =  ['Mocked Stream 1', 'Stream 2', 'Stream 3', 'Stream 4'];
-    // Fetch real data here and update data source
-    this.setState({
-      dataSource: this.state.dataSource.cloneWithRows(MOCKED_DATA)
-    });
+
+  componentWillMount (){
+    // this.props.streamwebactions.getGroups(urlobj.getGroups);
+    this.props.streamwebactions.getStreams(urlobj.getStreams);
+
+      console.log('this.props: ');
+      console.log(this.props);
   }
 
+  componentWillReceiveProps(nextProps) {
+    console.log('nextProps==>');
+    console.log(nextProps.streams);
+  this.setState({
+    dataSource: this.state.dataSource.cloneWithRows(nextProps.streams)
+  });
+  }
 
   rowPressed(guid) {
     console.log('row pressed' + {guid});
@@ -117,4 +133,14 @@ constructor(props) {
   }
 }
 
-module.exports = Streams;
+const mapStateToProps = (state) => ({
+    streams:state.streams.streams
+
+});
+const mapDispatchToProps = (dispatch) => ({
+    // streamactions : bindActionCreators(groupActionCreators, dispatch),
+    streamwebactions : bindActionCreators(groupWebActionCreators, dispatch),
+});
+
+export default connect(mapStateToProps,mapDispatchToProps)(Streams);
+// module.exports = Streams;
