@@ -15,10 +15,9 @@
    NavigatorIOS
  } from 'react-native';
 
- // var Login = require('./Login')
-import Login from './Login'
+import Login from './iOSJs/Login'
 import {Provider} from 'react-redux'
-import configureStore from './configureStore';
+import configureStore from './common/configureStore';
 
 const store = configureStore();
 
