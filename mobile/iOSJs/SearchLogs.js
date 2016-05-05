@@ -91,8 +91,9 @@ constructor(props) {
       sectionHeaderHasChanged: (s1, s2) => s1 !== s2,
     }),
     loading: false,
-  };
-    price : 'fix';
+    isSearching: false,
+    searchString : "",
+  }
  }
 
  componentWillMount (){
@@ -101,18 +102,27 @@ constructor(props) {
     //  this.props.itemactions.getFilteredLogs(urlobj.getFilterLogEvents,undefined, filterLogParams,this.successcb);
  }
  componentDidMount() {
-
+  //  this.setState({searchString : "TRACE PerformanceMonitorInterceptor"})
+  //  console.log("searchString = " + this.state.searchString);
  }
 
  componentWillReceiveProps(nextProps) {
-   console.log("componentWillReceiveProps");
-   console.log('log count start')
-  console.log(nextProps.items[0].events);
-   console.log('log count end ')
-   this.setState({ loading: false });
-   this.setState({
-     dataSource: this.state.dataSource.cloneWithRows(nextProps.items[0].events)
-   });
+    console.log("componentWillReceiveProps");
+    console.log(nextProps.items);
+   if(this.state.isSearching === true) {
+    //  console.log("isSearching....")
+     this.setState({ isSearching: false });
+     this.setState({
+       dataSource: this.state.dataSource.cloneWithRows(nextProps.items[0].events)
+     });
+     this.setState({ loading: false });
+   } else {
+    //  console.log("default log loading....")
+      this.setState({
+        dataSource: this.state.dataSource.cloneWithRows(nextProps.items[0].events)
+      });
+      this.setState({ loading: false });
+   }
  }
 
  successcb(resJson){
@@ -127,15 +137,42 @@ constructor(props) {
 
  rowPressed(guid) {
    console.log('row pressed' + {guid});
-   console.log('in rowPressed');
-   this.props.itemactions.getItems(urlobj.getItems,undefined, logEventsConfig,this.successcb);
  }
+
+ onSearchTextChangedEvent(event) {
+   this.setState({ searchString: event.nativeEvent.text });
+  //  console.log(this.state.searchString);
+  }
+
+  onkeyPressEvent(event) {
+    if(event.nativeEvent.key === "Enter"){
+          console.log("search query = " + this.state.searchString);
+          this.setState({
+            loading: true,
+            dataSource: this.state.dataSource.cloneWithRows([]),
+            isSearching : true,
+          });
+          filterLogParams.filterPattern = this.state.searchString;
+          this.props.itemactions.getFilteredLogs(urlobj.getFilterLogEvents,undefined, filterLogParams,this.successcb);
+          // this.setState({isSearching : true})
+          // console.log("isSearching = " + this.state.isSearching);
+    }
+   }
 
  renderSectionHeader(sectionData, sectionID) {
      return (
        <View style={styles.sectionContainer}>
-        <TextInput style={styles.searchInput}
-        placeholder='Search'/>
+          <TextInput style={styles.searchInput}
+            placeholder='Search'
+            value = {this.state.searchString}
+            onChange={this.onSearchTextChangedEvent.bind(this)}
+            keyboardType = 'default'
+            keyboardAppearance = 'dark'
+            clearButtonMode = 'while-editing'
+            enablesReturnKeyAutomatically = {true}
+            returnKeyType = 'search'
+            onKeyPress = {this.onkeyPressEvent.bind(this)}
+          />
         </View>
       );
 }
@@ -155,10 +192,7 @@ renderFooter() {
  }
 
  renderRow(rowData, sectionID, rowID) {
-   console.log('rowData');
-   console.log(rowData);
    //{ timestamp: 1462275978058, message: 'Exception in thread "ActiveMQ InactivityMonitor Worker" ', ingestionTime: 1462275983749 }
-  //  var logText = 'timestamp: ' + rowData.timestamp + ', message: ' + rowData.message + ', ingestionTime: '  + rowData.ingestionTime
    var time = rowData.timestamp
    var message = rowData.message
    var ingestionTime  = rowData.ingestionTime
@@ -188,7 +222,7 @@ renderFooter() {
      <ListView
      dataSource={this.state.dataSource}
      renderRow={this.renderRow.bind(this)}
-     renderSectionHeader={this.renderSectionHeader}
+     renderSectionHeader={this.renderSectionHeader.bind(this)}
      renderFooter={this.renderFooter.bind(this)}
      />
    );
