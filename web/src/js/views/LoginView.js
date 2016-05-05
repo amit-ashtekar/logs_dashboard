@@ -40,8 +40,11 @@ export class LoginView extends React.Component {
 
   handleClick(e) {
       e.preventDefault();
-    const username = this.refs.username.value
-    const password = this.refs.password.value
+    const username = this.refs.username.value;
+    const password = this.refs.password.value;
+      localStorage.removeItem('access_token');
+      localStorage.removeItem('getLogEvents');
+      localStorage.removeItem('liveLogEvents');
       this.props.loginactions.login(username,password,this.successCB);
   }
 
