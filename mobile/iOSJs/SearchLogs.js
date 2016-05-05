@@ -32,9 +32,17 @@ import {urlobj} from 'common/apiurls';
    textContainer: {
      flex: 1
    },
+   loadingFooterContainer: {
+     flex: 1,
+     backgroundColor: 'white',
+     flexDirection: 'row',
+     justifyContent: 'center',
+     padding: 5,
+   },
    separator: {
      height: 1,
-     backgroundColor: '#dddddd'
+     //  backgroundColor: '#dddddd'
+     backgroundColor: '#fefefe'
    },
    title: {
      fontSize: 14,
@@ -63,28 +71,37 @@ import {urlobj} from 'common/apiurls';
      borderColor: '#b4b4b4',
      borderRadius: 6,
     backgroundColor: '#ffffff',
-   }
+  },
+  rowStyle: {
+     backgroundColor: '#CABEAD',
+  },
+  evenRowStyle: {
+     backgroundColor: '#F0E197',
+  }
 
  });
 
 class SearchLogs extends Component {
 
 constructor(props) {
- super(props)
-      this.state = {
-        dataSource: new ListView.DataSource({
-           rowHasChanged: (row1, row2) => row1.guid !== row2.guid,
-           sectionHeaderHasChanged: (s1, s2) => s1 !== s2
-         })
-      };
-
-   loaded: false;
-   price: 'fix';
+  super(props);
+  this.state = {
+    dataSource: new ListView.DataSource({
+      rowHasChanged: (row1, row2) => row1.guid !== row2.guid,
+      sectionHeaderHasChanged: (s1, s2) => s1 !== s2,
+    }),
+    loading: false,
+  };
+    price : 'fix';
  }
 
  componentWillMount (){
-     this.props.itemactions.getItems(urlobj.getItems,undefined, logEventsConfig,this.successcb);
+    this.props.itemactions.getItems(urlobj.getItems,undefined, logEventsConfig,this.successcb);
+    this.setState({ loading: true });
     //  this.props.itemactions.getFilteredLogs(urlobj.getFilterLogEvents,undefined, filterLogParams,this.successcb);
+ }
+ componentDidMount() {
+
  }
 
  componentWillReceiveProps(nextProps) {
@@ -92,6 +109,7 @@ constructor(props) {
    console.log('log count start')
   console.log(nextProps.items[0].events);
    console.log('log count end ')
+   this.setState({ loading: false });
    this.setState({
      dataSource: this.state.dataSource.cloneWithRows(nextProps.items[0].events)
    });
@@ -114,22 +132,26 @@ constructor(props) {
  }
 
  renderSectionHeader(sectionData, sectionID) {
- return (
-   <View style={styles.sectionContainer}>
-     <TextInput style={styles.searchInput}
-      placeholder='Search'/>
-   </View>
- );
+     return (
+       <View style={styles.sectionContainer}>
+        <TextInput style={styles.searchInput}
+        placeholder='Search'/>
+        </View>
+      );
 }
 
 renderFooter() {
+   if (this.state.loading) {
    return (
-     <View style={styles.sectionContainer}>
-       <Text style={styles.title}>Sample Footer </Text>
+     <View style={styles.loadingFooterContainer}>
+       <Text style={styles.title}>Loading </Text>
        <ActivityIndicatorIOS
          animating={true}
          size={'large'} />
      </View>);
+   } else {
+     return null;
+   }
  }
 
  renderRow(rowData, sectionID, rowID) {
@@ -140,10 +162,10 @@ renderFooter() {
    var time = rowData.timestamp
    var message = rowData.message
    var ingestionTime  = rowData.ingestionTime
-
+   let rowStyle = rowID % 2 === 0 ?  styles.rowStyle : styles.evenRowStyle
    return (
  <TouchableHighlight onPress={() => this.rowPressed(rowData)}
-     underlayColor='#dddddd'>
+     underlayColor='#dddddd' style={rowStyle}>
    <View>
      <View style={styles.rowContainer}>
        <View  style={styles.textContainer}>
@@ -167,7 +189,7 @@ renderFooter() {
      dataSource={this.state.dataSource}
      renderRow={this.renderRow.bind(this)}
      renderSectionHeader={this.renderSectionHeader}
-     // renderFooter={this.renderFooter}
+     renderFooter={this.renderFooter.bind(this)}
      />
    );
  }
