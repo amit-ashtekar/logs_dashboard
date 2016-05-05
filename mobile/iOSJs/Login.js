@@ -8,6 +8,7 @@ import React, {
   AppRegistry,
   Component,
   StyleSheet,
+  Image,
   Text,
   View,
   TextInput,
@@ -18,12 +19,10 @@ import React, {
 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux'
-//import {getGroups} from 'common/webServices/dropdownList';
 import {login} from 'common/webServices/login';
 import * as actionCreators from 'common/actions';
 import * as loginactionCreators from 'common/webServices';
-
- // var Groups = require('./Groups')
+import synerzipLogo from '../resources/synerzipLogo.png';
 import Groups from './Groups'
 
 const styles = StyleSheet.create({
@@ -47,8 +46,8 @@ const styles = StyleSheet.create({
   button: {
     height: 40,
     marginTop: 10,
-    backgroundColor: 'gray',
-    borderColor: 'black',
+    backgroundColor: '#F8CA1E',
+    borderColor: 'gray',
     borderWidth: 1,
     borderRadius: 8,
     marginBottom: 10,
@@ -59,6 +58,10 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     margin: 10,
     color: 'black'
+  },
+  image: {
+  width: 300,
+  height: 50
   }
 });
 
@@ -108,13 +111,15 @@ class Login extends Component {
     console.log('in onLogin');
       pused = false
       this.props.loginactions.login('username','password', this.successCB);
-      //this.props.loginactions.login('username','password');
   }
-
 
   render() {
     return (
       <View style={styles.container}>
+      <Image
+        style={styles.image}
+        source={synerzipLogo}
+      />
       <TextInput style={styles.textEditInputs}
         placeholder='User name'
         value = 'a'/>
@@ -122,7 +127,7 @@ class Login extends Component {
           placeholder='Password'
           value = 'a'/>
         <TouchableHighlight style={styles.button}
-        underlayColor='#99d9f4'
+        underlayColor='#F5FCFF'
         onPress={this.onLogin.bind(this)}>
         <Text style={styles.buttonText}>Login</Text>
         </TouchableHighlight>
