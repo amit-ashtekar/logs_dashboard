@@ -40,7 +40,7 @@ import {urlobj} from 'common/apiurls';
      backgroundColor: '#dddddd'
    },
    title: {
-     fontSize: 18,
+     fontSize: 20,
      color: '#656565'
    },
    rowContainer: {
