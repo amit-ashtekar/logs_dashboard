@@ -8,9 +8,11 @@ import {bindActionCreators} from 'redux';
 import {Input} from "react-bootstrap";
 import * as groupWebActionCreators from 'common/webServices/dropdownList.js';
 import * as groupActionCreators from 'common/actions/dropdown.js';
+import * as loaderActionCreators from 'common/actions/loader';
 import * as itemActionCreators from 'common/webServices/itemService';
 import {connect} from 'react-redux';
 import {urlobj} from 'common/apiurls';
+
 
 export default class StreamListContainer extends React.Component {
     componentWillMount (){
@@ -22,6 +24,7 @@ export default class StreamListContainer extends React.Component {
         this.props.streamactions.selectedStream(e.target.value);
         if(e.target.value!=="select") {
             var getLogEventsStorObj= JSON.parse( localStorage.getItem("getLogEvents"));
+            this.props.loaderAction.startLoader();
             this.props.itemactions.getItems(urlobj.getItems,undefined, getLogEventsStorObj,this.successcb);
         }
     }
@@ -61,6 +64,7 @@ const mapDispatchToProps = (dispatch) => ({
     streamactions:bindActionCreators(groupActionCreators, dispatch),
     streamwebactions:bindActionCreators(groupWebActionCreators, dispatch),
     itemactions : bindActionCreators(itemActionCreators, dispatch),
+    loaderAction:bindActionCreators(loaderActionCreators,dispatch)
 })
 
 
