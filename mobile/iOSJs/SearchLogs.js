@@ -44,6 +44,10 @@ import {urlobj} from 'common/apiurls';
      //  backgroundColor: '#dddddd'
      backgroundColor: '#fefefe'
    },
+   loadingText: {
+     fontSize: 14,
+     color: 'gray'
+   },
    title: {
      fontSize: 14,
      color: '#0d0d0d'
@@ -159,6 +163,12 @@ constructor(props) {
     }
    }
 
+  epochToJsDate(incomingUTCepoch){
+      var date = new Date(0); // The 0 there is the key, which sets the date to the epoch
+      date.setUTCSeconds(incomingUTCepoch / 1000);
+      return date.toLocaleString() //date.toGMTString()
+   }
+
  renderSectionHeader(sectionData, sectionID) {
      return (
        <View style={styles.sectionContainer}>
@@ -181,10 +191,10 @@ renderFooter() {
    if (this.state.loading) {
    return (
      <View style={styles.loadingFooterContainer}>
-       <Text style={styles.title}>Loading </Text>
        <ActivityIndicatorIOS
          animating={true}
-         size={'large'} />
+         size={'small'} />
+        <Text style={styles.loadingText}> Loading... </Text>
      </View>);
    } else {
      return null;
@@ -193,9 +203,9 @@ renderFooter() {
 
  renderRow(rowData, sectionID, rowID) {
    //{ timestamp: 1462275978058, message: 'Exception in thread "ActiveMQ InactivityMonitor Worker" ', ingestionTime: 1462275983749 }
-   var time = rowData.timestamp
+   var time = this.epochToJsDate(rowData.timestamp)
    var message = rowData.message
-   var ingestionTime  = rowData.ingestionTime
+   var ingestionTime  = this.epochToJsDate(rowData.ingestionTime)
    let rowStyle = rowID % 2 === 0 ?  styles.rowStyle : styles.evenRowStyle
    return (
  <TouchableHighlight onPress={() => this.rowPressed(rowData)}
