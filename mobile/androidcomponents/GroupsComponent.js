@@ -18,6 +18,15 @@
 } from 'react-native';
 
 import StreamsView from './StreamsView'
+import {PropTypes } from 'react';
+
+import {getGroups} from 'common/webServices/dropdownList'
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux'
+import * as groupWebActionCreators from 'common/webServices/dropdownList';
+import * as groupActionCreators from 'common/actions/dropdown';
+import {urlobj} from 'common/apiurls';
+
 
  var styles = StyleSheet.create({
    textContainer: {
@@ -43,15 +52,14 @@ import StreamsView from './StreamsView'
  });
 
 
- var MOCKED_DATA =  ['Group 1', 'Group 2', 'Group 3', 'Group 4'];
+ //var MOCKED_DATA =  ['Group 1', 'Group 2', 'Group 3', 'Group 4'];
 
 
-export default class Groups extends Component {
+class Groups extends Component {
 
 constructor(props) {
   super(props)
-
-     this.state = {      
+     this.state = {
        dataSource: new ListView.DataSource({
           rowHasChanged: (row1, row2) => row1.guid !== row2.guid,
           sectionHeaderHasChanged: (s1, s2) => s1 !== s2
@@ -61,19 +69,22 @@ constructor(props) {
     price: 'fix';
   }
 
-
-  componentDidMount() {
-    this.fetchData();
+  componentWillMount (){
+      this.props.groupwebactions.getGroups(urlobj.getGroups);
+      console.log('this.props: ');
+      console.log(this.props);
   }
 
-  fetchData() {
-    
-    MOCKED_DATA =  ['MOCKED Group 1', 'MOCKED Group 2', 'Group 3', 'Group 4', 'Group 5'];
-    // Fetch real data here and update data source
-    this.setState({
-      dataSource: this.state.dataSource.cloneWithRows(MOCKED_DATA)
-    });
+componentWillReceiveProps(nextProps) {
+  this.setState({
+    dataSource: this.state.dataSource.cloneWithRows(nextProps.groups.groups)
+  });
+}
+  onGroupSelected(e,obj){
+      // e.preventDefault();
+      console.log("selected Group:",e.target.value);
   }
+
 
   rowPressed(guid) {
     console.log('row pressed' + {guid});
@@ -125,4 +136,16 @@ renderFooter() {
     );
   }
 }
+
+const mapStateToProps = (state) => ({
+    groups:state.groups.groups
+});
+
+const mapDispatchToProps = (dispatch) => ({
+    groupactions:bindActionCreators(groupActionCreators, dispatch),
+    groupwebactions:bindActionCreators(groupWebActionCreators, dispatch)
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Groups);
+
 
