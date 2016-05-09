@@ -20,6 +20,16 @@
 
 import LoginView from './LoginView'
 
+// import SearchLogs from './SearchLogs';
+
+import {PropTypes } from 'react';
+import {getStreams} from 'common/webServices/dropdownList'
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux'
+import * as groupWebActionCreators from 'common/webServices/dropdownList';
+import * as groupActionCreators from 'common/actions/dropdown';
+import {urlobj} from 'common/apiurls';
+
  var styles = StyleSheet.create({
    textContainer: {
      flex: 1
@@ -42,7 +52,7 @@ import LoginView from './LoginView'
  // var MOCKED_DATA =  ['Stream 1', 'Stream 2', 'Stream 3', 'Stream 4'];
 
 
-export default class Streams extends Component {
+class StreamsView extends Component {
 
 constructor(props) {
   super(props)
@@ -57,24 +67,30 @@ constructor(props) {
     price: 'fix';
   }
 
-  componentDidMount() {
-    this.fetchData();
+
+  componentWillMount (){
+    // this.props.streamwebactions.getGroups(urlobj.getGroups);
+    this.props.streamwebactions.getStreams(urlobj.getStreams);
+
+      console.log('this.props: ');
+      console.log(this.props);
   }
-  fetchData() {
-    MOCKED_DATA =  ['Mocked Stream 100', 'Stream 2', 'Stream 3', 'Stream 4'];
-    // Fetch real data here and update data source
-    this.setState({
-      dataSource: this.state.dataSource.cloneWithRows(MOCKED_DATA)
-    });
+
+  componentWillReceiveProps(nextProps) {
+    console.log('nextProps==>');
+    console.log(nextProps.streams);
+  this.setState({
+    dataSource: this.state.dataSource.cloneWithRows(nextProps.streams)
+  });
   }
 
 
   rowPressed(guid) {
     console.log('row pressed' + {guid});
-    this.props.navigator.push ({
+    /*this.props.navigator.push ({
       title: 'Search',
-      component: LoginView
-    });
+      component: SearchLogs
+    });*/
   }
 
 
@@ -101,5 +117,16 @@ constructor(props) {
     );
   }
 }
+
+const mapStateToProps = (state) => ({
+    streams:state.streams.streams
+
+});
+const mapDispatchToProps = (dispatch) => ({
+    // streamactions : bindActionCreators(groupActionCreators, dispatch),
+    streamwebactions : bindActionCreators(groupWebActionCreators, dispatch),
+});
+
+export default connect(mapStateToProps,mapDispatchToProps)(StreamsView);
 
 
