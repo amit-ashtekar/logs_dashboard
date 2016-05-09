@@ -32,14 +32,19 @@ export default class Item extends React.Component {
             'padding-top': '2%',
             'background-color':'#F0E197'
         };
+        const msgpadding = {
+            'padding-left': '11%'
+
+        };
+
       //  const {id, price, quantity, title } = this.props.product
 
         return (
-            <div className="box" style={this.getStyle(this.props.indexkey)?tdstyle:td1style}>
+            <div className="row box" style={this.getStyle(this.props.indexkey)?tdstyle:td1style}>
                 <Col xs={2} sm={2} md={2}>
                     { moment.utc(this.props.product.timestamp).format('YYYY-MM-DD HH:mm:ss')}
                 </Col>
-                <Col xs={10} sm={10} md={10}>
+                <Col xs={10} sm={10} md={10} style={msgpadding}>
                     {this.props.product.message }
                 </Col>
                 </div>
