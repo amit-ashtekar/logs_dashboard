@@ -25,12 +25,26 @@ import {urlobj} from 'common/apiurls';
    ListView,
    Text,
    Component,
+   ActionSheetIOS,
+   Switch,
    ActivityIndicatorIOS
  } = React;
 
  var styles = StyleSheet.create({
+   container: {
+     flex: 1,
+     backgroundColor: 'white',
+     justifyContent: 'center',
+   },
+   buttonsContainer: {
+     flex: 1,
+     backgroundColor: 'white',
+     flexDirection: 'row',
+     justifyContent: 'center',
+     padding: 5,
+   },
    textContainer: {
-     flex: 1
+     flex: 1,
    },
    loadingFooterContainer: {
      flex: 1,
@@ -51,6 +65,13 @@ import {urlobj} from 'common/apiurls';
    title: {
      fontSize: 14,
      color: '#0d0d0d'
+   },
+   liveText: {
+     fontSize: 18,
+     color: '#0d0d0d',
+     textAlign: 'center',
+     padding: 4,
+     marginLeft: 10
    },
    log: {
      fontSize: 12,
@@ -81,9 +102,31 @@ import {urlobj} from 'common/apiurls';
   },
   evenRowStyle: {
      backgroundColor: '#F0E197',
-  }
+  },
+button: {
+  height: 30,
+  marginLeft: 5,
+  backgroundColor: '#F8CA1E',
+  borderColor: 'gray',
+  borderWidth: 1,
+  borderRadius: 8,
+  justifyContent: 'center'
+},
+buttonText: {
+  fontSize: 17,
+  textAlign: 'center',
+  margin: 10,
+  color: 'black'
+}
 
  });
+
+ var BUTTONS = [
+  'Start Date',
+  'End Date',
+  'Cancel',
+];
+var CANCEL_INDEX = 2;
 
 class SearchLogs extends Component {
 
@@ -100,6 +143,7 @@ constructor(props) {
     searchString : "",
     isLiveLogs : false,
     getLogEvents : {},
+    eventSwitchIsOn: false,
   }
  }
 
@@ -130,10 +174,6 @@ constructor(props) {
         //console.log('\n\n**************************************************************');
         index = nextProps.items.length > 0 ? nextProps.items.length -1 : 0
         //console.log('\n\n**************************************************************');
-      } else {
-        console.log('LiveLogHandler unsubscribe...');
-        console.log(this.props.LiveLogHandler.LiveLogHandler);
-        this.props.LiveLogHandler.LiveLogHandler.unsubscribe();
       }
         //console.log('\n\n**************************************************************');
       // console.log("nextForwardToken = " + nextProps.items[0].nextForwardToken);
@@ -223,8 +263,83 @@ constructor(props) {
       return date.toLocaleString() //date.toGMTString()
    }
 
+   onFilter() {
+     console.log('Filter');
+     this.showActionSheet();
+   }
+
+   showActionSheet() {
+       ActionSheetIOS.showActionSheetWithOptions({
+         options: BUTTONS,
+         cancelButtonIndex: CANCEL_INDEX,
+       },
+       (buttonIndex) => {
+         this.setState({ clicked: BUTTONS[buttonIndex] });
+       });
+     }
+
+     onNextPressed() {
+       console.log('**Next**');
+     }
+
+     onPrevPressed() {
+       console.log('**Prev**');
+     }
+
+     showLiveLogs(value) {
+       console.log('***Live Log***');
+       console.log(value);
+       if (value === true) {
+         this.subscribeLiveLogs();
+       } else {
+         this.unsubscribeLiveLogs();
+       }
+       return this.setState({eventSwitchIsOn: value})
+     }
+
+     subscribeLiveLogs() {
+       console.log('LiveLog subscribe...');
+      //  this.setState({
+      //    loading: true,
+      //    dataSource: this.state.dataSource.cloneWithRows([]),
+      //  });
+       var _getLogEvents = {}
+        this.props.itemactions.getLiveLogs(urlobj.getLiveLogs,_getLogEvents,this.successcb);
+        this.setState({ isLiveLogs: true });
+     }
+
+     unsubscribeLiveLogs() {
+       console.log('LiveLogHandler unsubscribe...');
+       console.log(this.props.LiveLogHandler.LiveLogHandler);
+      //  this.setState({ isLiveLogs: false });
+       this.props.LiveLogHandler.LiveLogHandler.unsubscribe();
+     }
+
  renderSectionHeader(sectionData, sectionID) {
      return (
+       <View style={styles.container}>
+       <View style={styles.buttonsContainer}>
+       <TouchableHighlight style={styles.button}
+       underlayColor='#F5FCFF'
+       onPress={this.onFilter.bind(this)}>
+       <Text style={styles.buttonText}>Filter</Text>
+       </TouchableHighlight>
+       <TouchableHighlight style={styles.button}
+       underlayColor='#F5FCFF'
+       onPress={this.onPrevPressed.bind(this)}>
+       <Text style={styles.buttonText}>Prev</Text>
+       </TouchableHighlight>
+       <TouchableHighlight style={styles.button}
+       underlayColor='#F5FCFF'
+       onPress={this.onNextPressed.bind(this)}>
+       <Text style={styles.buttonText}>Next</Text>
+       </TouchableHighlight>
+       <Text style={styles.liveText}>Live</Text>
+       <Switch
+            onValueChange={this.showLiveLogs.bind(this)}
+            value={this.state.eventSwitchIsOn}
+             />
+       </View>
        <View style={styles.sectionContainer}>
           <TextInput style={styles.searchInput}
             placeholder='Search'
@@ -237,6 +352,7 @@ constructor(props) {
             returnKeyType = 'search'
             onKeyPress = {this.onkeyPressEvent.bind(this)}
           />
+        </View>
         </View>
       );
 }

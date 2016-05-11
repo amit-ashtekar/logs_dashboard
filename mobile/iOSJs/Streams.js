@@ -89,7 +89,7 @@ constructor(props) {
   rowPressed(guid) {
     console.log('row pressed' + {guid});
     this.props.navigator.push ({
-      title: 'Search',
+      title: 'Logs',
       component: SearchLogs
     });
   }
