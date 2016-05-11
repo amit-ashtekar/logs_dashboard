@@ -95,13 +95,19 @@ constructor(props) {
       sectionHeaderHasChanged: (s1, s2) => s1 !== s2,
     }),
     loading: false,
+    resultArray:[],
     isSearching: false,
     searchString : "",
+    isLiveLogs : false,
+    getLogEvents : {},
   }
  }
 
  componentWillMount (){
     this.props.itemactions.getItems(urlobj.getItems,undefined, logEventsConfig,this.successcb);
+    // var _getLogEvents = {}
+    //  this.props.itemactions.getLiveLogs(urlobj.getLiveLogs,_getLogEvents,this.successcb);
+    //  this.setState({ isLiveLogs: true });
     this.setState({ loading: true });
     //  this.props.itemactions.getFilteredLogs(urlobj.getFilterLogEvents,undefined, filterLogParams,this.successcb);
  }
@@ -112,20 +118,68 @@ constructor(props) {
 
  componentWillReceiveProps(nextProps) {
     console.log("componentWillReceiveProps");
-    console.log(nextProps.items);
-   if(this.state.isSearching === true) {
-    //  console.log("isSearching....")
-     this.setState({ isSearching: false });
-     this.setState({
-       dataSource: this.state.dataSource.cloneWithRows(nextProps.items[0].events)
-     });
-     this.setState({ loading: false });
-   } else {
-    //  console.log("default log loading....")
+
+    if(this.state.isLiveLogs === true) {
+      //console.log('\n\n**************************************************************');
+      console.log("live logs....");
+      var index = nextProps.items.length > 0 ? nextProps.items.length -1 : 0
+      console.log(nextProps.items[index].events);
+      let result = nextProps.items[index].events
+      // modify code to append live data and unscribe live logs
+      if (nextProps.items[index].events.length > 0 ) {
+        //console.log('\n\n**************************************************************');
+        index = nextProps.items.length > 0 ? nextProps.items.length -1 : 0
+        //console.log('\n\n**************************************************************');
+      } else {
+        console.log('LiveLogHandler unsubscribe...');
+        console.log(this.props.LiveLogHandler.LiveLogHandler);
+        this.props.LiveLogHandler.LiveLogHandler.unsubscribe();
+      }
+        //console.log('\n\n**************************************************************');
+      // console.log("nextForwardToken = " + nextProps.items[0].nextForwardToken);
+      // console.log("nextBackwardToken = " + nextProps.items[0].nextBackwardToken);
+      // console.log(nextProps.items[0].events);
       this.setState({
-        dataSource: this.state.dataSource.cloneWithRows(nextProps.items[0].events)
+        resultArray: this.state.resultArray.concat(result),
+        dataSource: this.state.dataSource.cloneWithRows(this.state.resultArray),
+        loading: false
       });
-      this.setState({ loading: false });
+      // this.setState({ loading: false });
+    } else if(this.state.isSearching === true) {
+      console.log("isSearching....")
+      console.log(nextProps.items[0].events);
+    //  this.setState({ isSearching: false });
+     this.setState({
+       isSearching: false,
+       dataSource: this.state.dataSource.cloneWithRows(nextProps.items[0].events),
+       loading: false
+     });
+    //  this.setState({ loading: false });
+   } else {
+     console.log("default log loading....")
+     console.log(nextProps.items[0].events);
+
+      this.setState({
+        dataSource: this.state.dataSource.cloneWithRows(nextProps.items[0].events),
+        loading: false
+      });
+      // this.setState({ loading: false });
+
+    //  Unsubscribe live logs
+    // this.setState({
+    //   dataSource: this.state.dataSource.cloneWithRows(nextProps.items[0].events),
+    //   loading: false,
+    //   getLogEvents: _getLogEvents,
+    //   isLiveLogs : true,
+    // });
+
+      // var _getLogEvents = {nextForwardToken: nextProps.items[0].nextForwardToken, nextBackwardToken : nextProps.items[0].nextBackwardToken};
+      // _getLogEvents = {}
+
+      // console.log("this.state.getLogEvents 2");
+      // console.log(this.state.getLogEvents);
+      // console.log(_getLogEvents);
+      // this.props.itemactions.getLiveLogs(urlobj.getLiveLogs,_getLogEvents,this.successcb);
    }
  }
 
@@ -240,7 +294,8 @@ renderFooter() {
 }
 
 const mapStateToProps = (state) => ({
-    items: state.Items
+    items: state.Items,
+    LiveLogHandler:state.liveLogHandler,
 });
 
 const mapDispatchToProps = (dispatch) => ({
