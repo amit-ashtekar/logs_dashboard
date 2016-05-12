@@ -11,13 +11,16 @@
   View,
   TextInput,
   TouchableHighlight,
+  TouchableOpacity,
+  ToolbarAndroid,
   Navigator,
   ListView,
-  component,
+  BackAndroid,
   Alert
 } from 'react-native';
 
 import StreamsView from './StreamsView'
+import BaseComponent from './BaseComponent';
 import {PropTypes } from 'react';
 
 import {getGroups} from 'common/webServices/dropdownList'
@@ -26,36 +29,15 @@ import { bindActionCreators } from 'redux'
 import * as groupWebActionCreators from 'common/webServices/dropdownList';
 import * as groupActionCreators from 'common/actions/dropdown';
 import {urlobj} from 'common/apiurls';
+import back_button from '../resources/back_button.png';
 
-
- var styles = StyleSheet.create({
-   textContainer: {
-     flex: 1
-   },
-   separator: {
-     height: 1,
-     backgroundColor: '#dddddd'
-   },
-   title: {
-     fontSize: 18,
-     color: '#656565'
-   },
-   rowContainer: {
-     flexDirection: 'row',
-     padding: 10
-   },
-   sectionContainer: {
-     flexDirection: 'row',
-     padding: 5,
-     backgroundColor: '#dfdfdf',
-   }
- });
+ 
 
 
  //var MOCKED_DATA =  ['Group 1', 'Group 2', 'Group 3', 'Group 4'];
 
 
-class Groups extends Component {
+class Groups extends BaseComponent {
 
 constructor(props) {
   super(props)
@@ -95,6 +77,7 @@ componentWillReceiveProps(nextProps) {
       });
   }
 
+
   renderSectionHeader(sectionData, sectionID) {
   return (
     <View style={styles.sectionContainer}>
@@ -115,6 +98,9 @@ renderFooter() {
   <TouchableHighlight onPress={() => this.rowPressed(rowData.guid)}
       underlayColor='#dddddd'>
     <View>
+
+       
+
       <View style={styles.rowContainer}>
         <View  style={styles.textContainer}>
           <Text style={styles.title}>{rowData}</Text>
@@ -127,13 +113,30 @@ renderFooter() {
 }
   render() {
     return (
+
+      <View>
+                <View style={styles.toolbar}>
+                <TouchableOpacity                
+                   onPress={this.onCancel.bind(this)}
+                   underlayColor='#dddddd'>
+                <Text style={styles.toolbarButton}>Back</Text>
+                </TouchableOpacity>
+                <Text style={styles.toolbarTitle}>Groups</Text>
+                   
+      </View>
+
       <ListView
       dataSource={this.state.dataSource}
       renderRow={this.renderRow.bind(this)}
       // renderSectionHeader={this.renderSectionHeader}
       // renderFooter={this.renderFooter} style={styles.listView}
       />
-    );
+      </View>
+     
+  );
+  }
+  onCancel() {
+     super.onBackPressed();
   }
 }
 
@@ -147,5 +150,55 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Groups);
+
+var styles = StyleSheet.create({
+   textContainer: {
+     flex: 1
+   },
+   separator: {
+     height: 1,
+     backgroundColor: '#dddddd'
+   },
+   title: {
+     fontSize: 18,
+     
+   },
+   rowContainer: {
+     flexDirection: 'row',
+     padding: 20,
+     marginTop:10,
+     marginLeft: 10,     
+     marginRight:10,
+     marginBottom:10,
+     fontSize: 20,
+     backgroundColor: '#dddddd'
+     
+   },
+   toolbar:{
+        backgroundColor:'#EEB211',
+        paddingTop:30,
+        paddingBottom:10,
+        flexDirection:'row'    //Step 1
+    },
+    toolbarButton:{
+        width: 50,        //Step 2
+        
+        marginLeft:5,
+        textAlign:'center',
+        fontSize:20
+    },
+    toolbarTitle:{
+        
+        fontSize:25,
+        textAlign:'center',
+        fontWeight:'bold',
+        flex:1                //Step 3
+    },
+   sectionContainer: {
+     flexDirection: 'row',
+     padding: 5,
+     backgroundColor: '#dfdfdf',
+   }
+ });
 
 
