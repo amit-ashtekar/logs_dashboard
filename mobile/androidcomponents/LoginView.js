@@ -23,7 +23,11 @@ import { bindActionCreators } from 'redux'
 import {login} from 'common/webServices/login';
 import * as actionCreators from 'common/actions';
 import * as loginactionCreators from 'common/webServices';
-import synerzipLogo from '../resources/synerzipLogo.png';
+import synerzipLogo from '../resources/logo.png';
+import backGroundImage from '../resources/kites.png';
+var Dimensions = require('Dimensions');
+var width = Dimensions.get('window').width
+var height = Dimensions.get('window').height
 
 
 const styles = StyleSheet.create({
@@ -31,8 +35,15 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F5FCFF',
+    backgroundColor: 'transparent'
   },
+  bg: {
+        position: 'absolute',
+        left: 0,
+        top: 0,
+        width: width,
+        height:height
+    },
   textEditInputs: {
     height: 40,
     marginRight: 15,
@@ -47,8 +58,8 @@ const styles = StyleSheet.create({
   button: {
     height: 40,
     marginTop: 10,
-    backgroundColor: 'gray',
-    borderColor: 'black',
+    backgroundColor: '#EEB211',
+    borderColor: '#EEB211',
     borderWidth: 1,
     borderRadius: 8,
     marginBottom: 10,
@@ -58,11 +69,11 @@ const styles = StyleSheet.create({
     fontSize: 20,
     textAlign: 'center',
     margin: 10,
-    color: 'black'
+    color: 'white'
   },
   image: {
-  width: 300,
-  height: 50
+  width: 246,
+  height: 26,
   }
 });
 
@@ -89,7 +100,7 @@ class LoginView extends Component {
         });
       }
     }
-    else if(nextProps.isAuthenticated === false ) {
+    else if(nextProps.isAuthenticated === false ) {      
       console.log("nextProps fails");
       // Show alert for failuer
       return (
@@ -126,16 +137,19 @@ class LoginView extends Component {
  render() {
     return (
       <View style={styles.container}>
+       <Image style={styles.bg}  source={backGroundImage} />
       <Image
         style={styles.image}
         source={synerzipLogo}
+       
       />
       <TextInput style={styles.textEditInputs}
-        placeholder='User name'
-        value = 'a'/>
+        
+        
+        />
         <TextInput style={styles.textEditInputs}
-          placeholder='Password'
-          value = 'a'/>
+          
+          />
         <TouchableHighlight style={styles.button}
         underlayColor='#F5FCFF'
         onPress={this.onLogin.bind(this)}>
