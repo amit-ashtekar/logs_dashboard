@@ -134,7 +134,11 @@ constructor(props) {
   super(props);
   this.state = {
     dataSource: new ListView.DataSource({
-      rowHasChanged: (row1, row2) => row1.guid !== row2.guid,
+      // rowHasChanged: (row1, row2) => row1 !== row2,
+      rowHasChanged: function (row1, row2) {
+           console.log(row1, 'row2', row2);
+           return row1 !== row2;
+        },
       sectionHeaderHasChanged: (s1, s2) => s1 !== s2,
     }),
     loading: false,
@@ -144,6 +148,9 @@ constructor(props) {
     isLiveLogs : false,
     getLogEvents : {},
     eventSwitchIsOn: false,
+    isPagingNext: false,
+    isPagingPrev: false,
+    localLogEventsConfig: {}
   }
  }
 
@@ -162,64 +169,49 @@ constructor(props) {
 
  componentWillReceiveProps(nextProps) {
     console.log("componentWillReceiveProps");
-
-    if(this.state.isLiveLogs === true) {
-      //console.log('\n\n**************************************************************');
-      console.log("live logs....");
+    if(this.state.isPagingNext === true) { // paging Next, Prev
+      if(nextProps.items[0].events.length) { // if dtata is there, update tokens and reload list
+        this.setState({
+          isPagingNext: false,
+          localLogEventsConfig: {
+            'nextForwardToken':nextProps.items[0].nextForwardToken,
+            'nextBackwardToken': nextProps.items[0].nextBackwardToken
+          },
+          dataSource: this.state.dataSource.cloneWithRows(nextProps.items[0].events)
+        });
+      } else {
+        this.setState({
+          isPagingNext: false,
+        });
+      }
+    }
+    else if(this.state.isLiveLogs === true) { // live logs
       var index = nextProps.items.length > 0 ? nextProps.items.length -1 : 0
-      console.log(nextProps.items[index].events);
       let result = nextProps.items[index].events
       // modify code to append live data and unscribe live logs
       if (nextProps.items[index].events.length > 0 ) {
-        //console.log('\n\n**************************************************************');
         index = nextProps.items.length > 0 ? nextProps.items.length -1 : 0
-        //console.log('\n\n**************************************************************');
       }
-        //console.log('\n\n**************************************************************');
-      // console.log("nextForwardToken = " + nextProps.items[0].nextForwardToken);
-      // console.log("nextBackwardToken = " + nextProps.items[0].nextBackwardToken);
-      // console.log(nextProps.items[0].events);
       this.setState({
         resultArray: this.state.resultArray.concat(result),
         dataSource: this.state.dataSource.cloneWithRows(this.state.resultArray),
         loading: false
       });
-      // this.setState({ loading: false });
-    } else if(this.state.isSearching === true) {
-      console.log("isSearching....")
-      console.log(nextProps.items[0].events);
-    //  this.setState({ isSearching: false });
+    } else if(this.state.isSearching === true) { // search logs
      this.setState({
        isSearching: false,
        dataSource: this.state.dataSource.cloneWithRows(nextProps.items[0].events),
        loading: false
      });
-    //  this.setState({ loading: false });
-   } else {
-     console.log("default log loading....")
-     console.log(nextProps.items[0].events);
-
-      this.setState({
+   } else { // default logs
+    this.setState({
+      localLogEventsConfig: {
+        'nextForwardToken':nextProps.items[0].nextForwardToken,
+        'nextBackwardToken': nextProps.items[0].nextBackwardToken
+      },
         dataSource: this.state.dataSource.cloneWithRows(nextProps.items[0].events),
-        loading: false
+        loading: false,
       });
-      // this.setState({ loading: false });
-
-    //  Unsubscribe live logs
-    // this.setState({
-    //   dataSource: this.state.dataSource.cloneWithRows(nextProps.items[0].events),
-    //   loading: false,
-    //   getLogEvents: _getLogEvents,
-    //   isLiveLogs : true,
-    // });
-
-      // var _getLogEvents = {nextForwardToken: nextProps.items[0].nextForwardToken, nextBackwardToken : nextProps.items[0].nextBackwardToken};
-      // _getLogEvents = {}
-
-      // console.log("this.state.getLogEvents 2");
-      // console.log(this.state.getLogEvents);
-      // console.log(_getLogEvents);
-      // this.props.itemactions.getLiveLogs(urlobj.getLiveLogs,_getLogEvents,this.successcb);
    }
  }
 
@@ -279,11 +271,23 @@ constructor(props) {
      }
 
      onNextPressed() {
-       console.log('**Next**');
+      console.log('**Next**');
+      console.log(this.state.localLogEventsConfig);
+      this.setState({
+        isPagingNext: true,
+        // dataSource: this.state.dataSource.cloneWithRows([])
+      });
+      this.props.itemactions.getItems(urlobj.getItems,'Next', this.state.localLogEventsConfig, this.successcb);
      }
 
      onPrevPressed() {
        console.log('**Prev**');
+       console.log(this.state.localLogEventsConfig);
+       this.setState({
+         isPagingNext: true,
+         //dataSource: this.state.dataSource.cloneWithRows(['1'])
+       });
+       this.props.itemactions.getItems(urlobj.getItems,'Prev', this.state.localLogEventsConfig, this.successcb);
      }
 
      showLiveLogs(value) {
@@ -291,18 +295,23 @@ constructor(props) {
        console.log(value);
        if (value === true) {
          this.subscribeLiveLogs();
+          this.setState({eventSwitchIsOn: true})
        } else {
          this.unsubscribeLiveLogs();
+          this.setState({eventSwitchIsOn: false})
        }
-       return this.setState({eventSwitchIsOn: value})
+
+
      }
 
      subscribeLiveLogs() {
        console.log('LiveLog subscribe...');
-      //  this.setState({
-      //    loading: true,
-      //    dataSource: this.state.dataSource.cloneWithRows([]),
+       //  this.setState({
+      //   // loading: true,
+      //    dataSource: this.state.dataSource.cloneWithRows([])
       //  });
+       console.log('dataSource::-');
+       console.log(this.state.dataSource);
        var _getLogEvents = {}
         this.props.itemactions.getLiveLogs(urlobj.getLiveLogs,_getLogEvents,this.successcb);
         this.setState({ isLiveLogs: true });
@@ -311,11 +320,14 @@ constructor(props) {
      unsubscribeLiveLogs() {
        console.log('LiveLogHandler unsubscribe...');
        console.log(this.props.LiveLogHandler.LiveLogHandler);
-      //  this.setState({ isLiveLogs: false });
+       console.log('LiveLogHandler unsubscribe...2');
+       console.log(this.props.LiveLogHandler);
+       this.setState({ isLiveLogs: false });
        this.props.LiveLogHandler.LiveLogHandler.unsubscribe();
      }
 
  renderSectionHeader(sectionData, sectionID) {
+   console.log('In header...');
      return (
        <View style={styles.container}>
        <View style={styles.buttonsContainer}>
@@ -404,6 +416,7 @@ renderFooter() {
      renderRow={this.renderRow.bind(this)}
      renderSectionHeader={this.renderSectionHeader.bind(this)}
      renderFooter={this.renderFooter.bind(this)}
+     enableEmptySections= {true}
      />
    );
  }
