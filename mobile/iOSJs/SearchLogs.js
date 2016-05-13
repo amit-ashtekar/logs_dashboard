@@ -136,7 +136,7 @@ constructor(props) {
     dataSource: new ListView.DataSource({
       // rowHasChanged: (row1, row2) => row1 !== row2,
       rowHasChanged: function (row1, row2) {
-           console.log(row1, 'row2', row2);
+           console.log('row1', row1, 'row2', row2);
            return row1 !== row2;
         },
       sectionHeaderHasChanged: (s1, s2) => s1 !== s2,
@@ -195,7 +195,11 @@ constructor(props) {
       this.setState({
         resultArray: this.state.resultArray.concat(result),
         dataSource: this.state.dataSource.cloneWithRows(this.state.resultArray),
-        loading: false
+        loading: false,
+        localLogEventsConfig: {
+          'nextForwardToken':nextProps.items[0].nextForwardToken,
+          'nextBackwardToken': nextProps.items[0].nextBackwardToken
+        }
       });
     } else if(this.state.isSearching === true) { // search logs
      this.setState({
@@ -217,12 +221,6 @@ constructor(props) {
 
  successcb(resJson){
    console.log('in success block');
-  //  console.log(resJson);
-
-    //  var getLogEvents={};
-    //  getLogEvents.nextForwardToken=resJson.nextForwardToken;
-    //  getLogEvents. nextBackwardToken=resJson. nextBackwardToken;
-    //  localStorage.setItem("getLogEvents",JSON.stringify(getLogEvents));
  }
 
  rowPressed(guid) {
@@ -231,7 +229,6 @@ constructor(props) {
 
  onSearchTextChangedEvent(event) {
    this.setState({ searchString: event.nativeEvent.text });
-  //  console.log(this.state.searchString);
   }
 
   onkeyPressEvent(event) {
@@ -244,8 +241,6 @@ constructor(props) {
           });
           filterLogParams.filterPattern = this.state.searchString;
           this.props.itemactions.getFilteredLogs(urlobj.getFilterLogEvents,undefined, filterLogParams,this.successcb);
-          // this.setState({isSearching : true})
-          // console.log("isSearching = " + this.state.isSearching);
     }
    }
 
@@ -273,6 +268,8 @@ constructor(props) {
      onNextPressed() {
       console.log('**Next**');
       console.log(this.state.localLogEventsConfig);
+      this.unsubscribeLiveLogs();
+      this.setState({eventSwitchIsOn: false})
       this.setState({
         isPagingNext: true,
         // dataSource: this.state.dataSource.cloneWithRows([])
@@ -283,6 +280,8 @@ constructor(props) {
      onPrevPressed() {
        console.log('**Prev**');
        console.log(this.state.localLogEventsConfig);
+        this.unsubscribeLiveLogs();
+        this.setState({eventSwitchIsOn: false})
        this.setState({
          isPagingNext: true,
          //dataSource: this.state.dataSource.cloneWithRows(['1'])
