@@ -13,6 +13,7 @@ import * as itemActionCreators from 'common/webServices/itemService';
 import {logEventsConfig, filterLogParams} from 'common/AWSConfig/config.js';
 import {urlobj} from 'common/apiurls';
 import { Button, Card } from 'react-native-material-design';
+import moment from 'moment';
 
 
  import React, {
@@ -58,9 +59,15 @@ constructor(props) {
  }
 
  componentWillMount (){
-    this.props.itemactions.getItems(urlobj.getItems,undefined, logEventsConfig,this.successcb);
-    this.setState({ loading: true });
+    /*this.props.itemactions.getItems(urlobj.getItems,undefined, logEventsConfig,this.successcb);
+    this.setState({ loading: true });*/
+    this.loadDefaultLogs();
     //  this.props.itemactions.getFilteredLogs(urlobj.getFilterLogEvents,undefined, filterLogParams,this.successcb);
+ }
+
+ loadDefaultLogs(){
+   this.props.itemactions.getItems(urlobj.getItems,undefined, logEventsConfig,this.successcb);
+    this.setState({ loading: true });
  }
  componentDidMount() {
   //  this.setState({searchString : "TRACE PerformanceMonitorInterceptor"})
@@ -69,6 +76,7 @@ constructor(props) {
 
  componentWillReceiveProps(nextProps) {
     console.log("componentWillReceiveProps");
+
     if(this.state.isLiveLogs === true) {      
       console.log("live logs....");
       var index = nextProps.items.length > 0 ? nextProps.items.length -1 : 0
@@ -76,8 +84,7 @@ constructor(props) {
       let result = nextProps.items[index].events      
       if (nextProps.items[index].events.length > 0 ) {        
         index = nextProps.items.length > 0 ? nextProps.items.length -1 : 0        
-      }
-       
+      }       
       this.setState({
         resultArray: this.state.resultArray.concat(result),
         dataSource: this.state.dataSource.cloneWithRows(this.state.resultArray),
@@ -90,6 +97,7 @@ constructor(props) {
     
      this.setState({
        isSearching: false,
+       searchString:'',
        dataSource: this.state.dataSource.cloneWithRows(nextProps.items[0].events),
        loading: false
      });
@@ -100,7 +108,10 @@ constructor(props) {
 
       this.setState({
         dataSource: this.state.dataSource.cloneWithRows(nextProps.items[0].events),
-        loading: false
+        loading: false,
+        startTime:'',
+        endTime:''
+
       });
  }
 }
@@ -158,15 +169,29 @@ search(){
      subscribeLiveLogs() {
        console.log('LiveLog subscribe...');      
        var _getLogEvents = {}
-        this.props.itemactions.getLiveLogs(urlobj.getLiveLogs,_getLogEvents,this.successcb);
-        this.setState({ isLiveLogs: true });
+       //this.setState({ isLiveLogs: true });
+
+        this.setState({
+            loading: true,
+            dataSource: this.state.dataSource.cloneWithRows([]),            
+            isLiveLogs: true,
+          });
+       this.props.itemactions.getLiveLogs(urlobj.getLiveLogs,_getLogEvents,this.successcb);
+        
      }
 
      unsubscribeLiveLogs() {
+      //this.setState({ isLiveLogs: false });
+      this.setState({
+            loading: true,
+            dataSource: this.state.dataSource.cloneWithRows([]),            
+            isLiveLogs: false,
+          });     
        console.log('LiveLogHandler unsubscribe...');
        console.log(this.props.LiveLogHandler.LiveLogHandler);
       
        this.props.LiveLogHandler.LiveLogHandler.unsubscribe();
+       this.loadDefaultLogs();
      }
     onFilter() {
      /*console.log('Filter');
@@ -186,13 +211,36 @@ search(){
     
    }
 
-    handleStartDateChange(){      
-            this.setState({startTime: this.state.stringTemp});
-            filterLogParams.startTime =this.state.stringTemp;
-            console.log("Bipin -startTime :", filterLogParams.startTime);
-            this.search();
+    onHandleStartDateChange(value){   
+      if(this.state.isLiveLogs===true){
+        this.showLiveLogs(false) 
+      }
+      console.log("onHandleStartDateChange()",value)
+      this.setState({
+            loading: true,
+            dataSource: this.state.dataSource.cloneWithRows([]),            
+          });
+          
+          if(value ==='start'){  
+            filterLogParams.startTime =this.state.startTime;
+           // filterLogParams.endTime='';
+              filterLogParams.endTime = null;
+            
+          }else{
+            filterLogParams.endTime =this.state.endTime;
+            //filterLogParams.startTime='';
+            filterLogParams.startTime = null;
+          }
+           
+            console.log("Bipin -startTime :", this.state.startTime);
+            console.log("Bipin -endTime :", this.state.endTime)
+           // console.log("Bipin -filterLogParams-startTime :", filterLogParams.startTime);
+            console.log("filterLogParams:",filterLogParams);
+            this.props.itemactions.getFilteredLogs(urlobj.getFilterLogEvents,undefined, filterLogParams,this.successcb);
         
     }
+
+
 
     onNextPressed() {
        console.log('**Next**');
@@ -201,23 +249,45 @@ search(){
      onPrevPressed() {
        console.log('**Prev**');
      }
-async showPicker(stateKey, options) {
-   console.log('stateKey',options);
+  async showPicker(stateKey, options) {
+   console.log('BIPIN',stateKey);
     try {
       var newState = {};
       const {action, year, month, day} = await DatePickerAndroid.open(options);
       if (action === DatePickerAndroid.dismissedAction) {
         newState[stateKey + 'Text'] = 'dismissed';
       } else {
-        var date = new Date(year, month, day);
-        newState[stateKey + 'Text'] = date.toLocaleDateString();
-        var stringTemp=date.toLocaleDateString();
-        newState[stateKey + 'Date'] = date;
-        this.handleStartDateChange(stringTemp);
-      }
-      //this.setState(newState);
+        //var date = new Date(year,month,day);
+        /*var d = new Date();
+        var milliseconds = d.getMilliseconds();
+        var seconds=d.getSeconds();
+        var minutes=d.getMinutes();
+        var hours=d.getHours();*/
+        //var date = new Date(year, month, day, hours, minutes, seconds, milliseconds); 
+        var date = new Date(year, month, day); 
+        // console.warn(`Error in example get date : `, date.getTime());
+         //console.warn(`Error in example get timeInMiliSeconds : `, milliseconds);
+        // console.warn(`Error in example get timeInMiliSeconds : `, d.getMinutes());
       
-      //console.warn(`Error in example '${stateKey}': `, stringTemp);
+        //newState[stateKey + 'Text'] = date.toLocaleDateString();
+        //var stringTemp=moment(new Date(year, month, day)).format('MM/DD/YYYY');
+        var dateTime = date.getTime(); 
+        //console.warn(`Error in example get timeInMiliSeconds : `, stringTemp);
+        
+        //newState[stateKey + 'Date'] = date;
+       if(stateKey==='start'){
+            this.setState({startTime:dateTime});
+            this.onHandleStartDateChange('start');
+        }else{
+            this.setState({endTime:dateTime});
+            this.onHandleStartDateChange('end');
+
+        }
+      }
+      //var stringTemp=moment(new Date(year, month, day)).format('MM/DD/YYYY')
+      //var stringTemp='';
+      //var stringTemp=stringTemp.concat(date.getMonth()).concat(date.getDate()).concat(date.getFullYear());
+      //console.warn(`Error in bpn '${stateKey}': `, this.state.startTime);
     } catch ({code, message}) {
       console.warn(`Error in example '${stateKey}': `, message);
     }
@@ -272,11 +342,12 @@ renderFooter() {
                 underlayColor='#dddddd'>                
                   <Text style={styles.toolbarButton}>Back</Text>
                 </TouchableHighlight>
-                  <Text style={styles.toolbarTitle}>Logs</Text>
+                  <Text style={styles.toolbarTitle}>Logs</Text> 
                   <Text style={styles.liveText}>Live</Text>
-                    <Switch onValueChange={this.showLiveLogs.bind(this)}
+                  <Switch onValueChange={this.showLiveLogs.bind(this)}
                     value={this.state.eventSwitchIsOn}
-                   />
+
+                  />
      
                                        
     </View>
@@ -284,13 +355,13 @@ renderFooter() {
 
          <TouchableHighlight 
           style={styles.button}
-        onPress={this.showPicker.bind(this, 'simple', {date: this.state.simpleDate})}> 
+        onPress={this.showPicker.bind(this, 'start', {date: this.state.simpleDate})}> 
         <Text style={styles.buttonText}>Filter By Start Date</Text> 
         </TouchableHighlight>
 
         <TouchableHighlight 
           style={styles.button}
-        onPress={this.showPicker.bind(this, 'simple', {date: this.state.simpleDate})}> 
+        onPress={this.showPicker.bind(this, 'end', {date: this.state.simpleDate})}> 
         <Text style={styles.buttonText}>Filter By End Date</Text> 
         </TouchableHighlight>
         
