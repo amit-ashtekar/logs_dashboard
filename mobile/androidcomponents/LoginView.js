@@ -24,7 +24,7 @@ import {login} from 'common/webServices/login';
 import * as actionCreators from 'common/actions';
 import * as loginactionCreators from 'common/webServices';
 import synerzipLogo from '../resources/logo.png';
-import backGroundImage from '../resources/kites.png';
+import backGroundImage from '../resources/nice.png';
 var Dimensions = require('Dimensions');
 var width = Dimensions.get('window').width
 var height = Dimensions.get('window').height
@@ -148,7 +148,7 @@ class LoginView extends Component {
         
         />
         <TextInput style={styles.textEditInputs}
-          
+            
           />
         <TouchableHighlight style={styles.button}
         underlayColor='#F5FCFF'
