@@ -14,6 +14,9 @@ import * as itemActionCreators from 'common/webServices/itemService';
 import {logEventsConfig, filterLogParams} from 'common/AWSConfig/config.js';
 import {urlobj} from 'common/apiurls';
 
+var DismissKeyboard = require('dismissKeyboard');
+var deepcopy = require("deepcopy");
+
 
  var {
    StyleSheet,
@@ -27,7 +30,11 @@ import {urlobj} from 'common/apiurls';
    Component,
    ActionSheetIOS,
    Switch,
-   ActivityIndicatorIOS
+   ActivityIndicatorIOS,
+   DatePickerIOS,
+   TouchableWithoutFeedback,
+   TouchableOpacity
+
  } = React;
 
  var styles = StyleSheet.create({
@@ -36,12 +43,17 @@ import {urlobj} from 'common/apiurls';
      backgroundColor: 'white',
      justifyContent: 'center',
    },
+   listcontainer: {
+     flex: 1,
+     marginTop: 0,
+     backgroundColor: 'white',
+   },
    buttonsContainer: {
      flex: 1,
      backgroundColor: 'white',
      flexDirection: 'row',
      justifyContent: 'center',
-     padding: 5,
+     padding: 3,
    },
    textContainer: {
      flex: 1,
@@ -81,9 +93,19 @@ import {urlobj} from 'common/apiurls';
      flexDirection: 'row',
      padding: 10
    },
+   sectionHeaderContainer: {
+     marginTop: 64,
+     marginRight: 0,
+     marginLeft: 0,
+     marginBottom: 0,
+     backgroundColor: '#fefefe',
+    justifyContent: 'center',
+   },
    sectionContainer: {
      flexDirection: 'row',
-     padding: 5,
+     marginRight: 0,
+     marginLeft: 0,
+     marginTop: 0, // 64
      backgroundColor: '#C9C9C9',
    },
    searchInput: {
@@ -92,6 +114,8 @@ import {urlobj} from 'common/apiurls';
      marginRight: 5,
      marginLeft: 5,
      fontSize: 15,
+     marginTop: 5,
+     marginBottom: 5,
      borderWidth: 1,
      borderColor: '#b4b4b4',
      borderRadius: 6,
@@ -117,8 +141,36 @@ buttonText: {
   textAlign: 'center',
   margin: 10,
   color: 'black'
-}
-
+},
+centering: {
+    alignItems: 'center',
+    // justifyContent: 'center',
+    justifyContent: 'space-around',
+    backgroundColor: 'rgba(0,0,0,0)',
+  },
+  gray: {
+    backgroundColor: '#cccccc',
+  },
+  DateInput : {
+    flex: 1,
+    height: 21,
+    marginLeft: 3,
+    marginRight: 3,
+    backgroundColor: '#F8CA1E',
+    borderColor: 'gray',
+    borderWidth: 1,
+    borderRadius: 3,
+  },
+  datePicker : {
+    borderTopWidth:1,
+    position:'absolute',
+    bottom:0,
+    right:0,
+    left:0,
+    height : 220,
+    borderColor:'#CCC',
+    backgroundColor:'#FFF',
+  },
  });
 
  var BUTTONS = [
@@ -150,16 +202,25 @@ constructor(props) {
     eventSwitchIsOn: false,
     isPagingNext: false,
     isPagingPrev: false,
-    localLogEventsConfig: {}
+    localLogEventsConfig: {},
+    startDateString: "",
+    EndDateString: "",
+    datePickerMode: 'hidden',
+    startDate: new Date(),
+    endDate : new Date(),
+    selectedDatePicker: 'start', // or 'end'
+    isSearchingWithDateFilter: false
   }
  }
 
  componentWillMount (){
     this.props.itemactions.getItems(urlobj.getItems,undefined, logEventsConfig,this.successcb);
+    this.setState({ loading: true });
+
+
     // var _getLogEvents = {}
     //  this.props.itemactions.getLiveLogs(urlobj.getLiveLogs,_getLogEvents,this.successcb);
     //  this.setState({ isLiveLogs: true });
-    this.setState({ loading: true });
     //  this.props.itemactions.getFilteredLogs(urlobj.getFilterLogEvents,undefined, filterLogParams,this.successcb);
  }
  componentDidMount() {
@@ -201,7 +262,15 @@ constructor(props) {
           'nextBackwardToken': nextProps.items[0].nextBackwardToken
         }
       });
-    } else if(this.state.isSearching === true) { // search logs
+    } else if(this.state.isSearchingWithDateFilter === true) { // search logs
+     this.setState({
+       isSearching: false,
+       dataSource: this.state.dataSource.cloneWithRows(nextProps.items[0].events),
+       loading: false,
+       isSearchingWithDateFilter: false
+     });
+   }
+     else if(this.state.isSearching === true) { // search logs
      this.setState({
        isSearching: false,
        dataSource: this.state.dataSource.cloneWithRows(nextProps.items[0].events),
@@ -231,14 +300,27 @@ constructor(props) {
    this.setState({ searchString: event.nativeEvent.text });
   }
 
+  onStartDateTextChangedEvent(event) {
+    this.setState({ startDateString: event.nativeEvent.text });
+   }
+
   onkeyPressEvent(event) {
     if(event.nativeEvent.key === "Enter"){
           console.log("search query = " + this.state.searchString);
+          console.log(this.state.isLiveLogs);
+          if (this.state.isLiveLogs === true) {
+            this.unsubscribeLiveLogs();
+            console.log("search query unsubscribeLiveLogs ");
+          }
+
           this.setState({
+            eventSwitchIsOn: false,
+            datePickerMode:'hidden',
             loading: true,
             dataSource: this.state.dataSource.cloneWithRows([]),
             isSearching : true,
           });
+
           filterLogParams.filterPattern = this.state.searchString;
           this.props.itemactions.getFilteredLogs(urlobj.getFilterLogEvents,undefined, filterLogParams,this.successcb);
     }
@@ -268,8 +350,9 @@ constructor(props) {
      onNextPressed() {
       console.log('**Next**');
       console.log(this.state.localLogEventsConfig);
-      this.unsubscribeLiveLogs();
-      this.setState({eventSwitchIsOn: false})
+      if(this.state.isLiveLogs === true) {
+        this.showLiveLogs(false)
+      }
       this.setState({
         isPagingNext: true,
         // dataSource: this.state.dataSource.cloneWithRows([])
@@ -280,8 +363,9 @@ constructor(props) {
      onPrevPressed() {
        console.log('**Prev**');
        console.log(this.state.localLogEventsConfig);
-        this.unsubscribeLiveLogs();
-        this.setState({eventSwitchIsOn: false})
+       if(this.state.isLiveLogs === true) {
+         this.showLiveLogs(false)
+       }
        this.setState({
          isPagingNext: true,
          //dataSource: this.state.dataSource.cloneWithRows(['1'])
@@ -313,20 +397,23 @@ constructor(props) {
        console.log(this.state.dataSource);
        var _getLogEvents = {}
         this.props.itemactions.getLiveLogs(urlobj.getLiveLogs,_getLogEvents,this.successcb);
-        this.setState({ isLiveLogs: true });
+        this.setState({
+           isLiveLogs: true,
+           loading: true,
+           dataSource: this.state.dataSource.cloneWithRows([]),
+         });
      }
 
      unsubscribeLiveLogs() {
-       console.log('LiveLogHandler unsubscribe...');
-       console.log(this.props.LiveLogHandler.LiveLogHandler);
-       console.log('LiveLogHandler unsubscribe...2');
-       console.log(this.props.LiveLogHandler);
        this.setState({ isLiveLogs: false });
        this.props.LiveLogHandler.LiveLogHandler.unsubscribe();
+       console.log('\n\n****** unsubscribeLiveLogs **********\n\n');
      }
 
- renderSectionHeader(sectionData, sectionID) {
-   console.log('In header...');
+/*
+    //  renderSectionHeader(sectionData, sectionID) {
+    renderHeader() {
+       console.log('In header...');
      return (
        <View style={styles.container}>
        <View style={styles.buttonsContainer}>
@@ -367,6 +454,7 @@ constructor(props) {
         </View>
       );
 }
+*/
 
 renderFooter() {
    if (this.state.loading) {
@@ -408,17 +496,225 @@ renderFooter() {
  </TouchableHighlight>
  );
 }
- render() {
-   return (
-     <ListView
-     dataSource={this.state.dataSource}
-     renderRow={this.renderRow.bind(this)}
-     renderSectionHeader={this.renderSectionHeader.bind(this)}
-     renderFooter={this.renderFooter.bind(this)}
-     enableEmptySections= {true}
-     />
+
+renderSearchBar() {
+  return (
+    <View style={styles.sectionContainer}>
+      <TextInput style={styles.searchInput}
+        placeholder='Search'
+        value = {this.state.searchString}
+        onChange={this.onSearchTextChangedEvent.bind(this)}
+        keyboardType = 'default'
+        keyboardAppearance = 'dark'
+        clearButtonMode = 'while-editing'
+        enablesReturnKeyAutomatically = {true}
+        returnKeyType = 'search'
+        onKeyPress = {this.onkeyPressEvent.bind(this)}
+      />
+    </View>
+  );
+}
+
+renderPrevNextAndLiveFilters(){
+  return (
+    <View style={styles.buttonsContainer}>
+        <TouchableHighlight style={styles.button}
+             underlayColor='#F5FCFF'
+             onPress={this.onFilter.bind(this)}>
+             <Text style={styles.buttonText}>Filter</Text>
+         </TouchableHighlight>
+         <TouchableHighlight style={styles.button}
+             underlayColor='#F5FCFF'
+             onPress={this.onPrevPressed.bind(this)}>
+             <Text style={styles.buttonText}>Prev</Text>
+         </TouchableHighlight>
+         <TouchableHighlight style={styles.button}
+             underlayColor='#F5FCFF'
+             onPress={this.onNextPressed.bind(this)}>
+             <Text style={styles.buttonText}>Next</Text>
+         </TouchableHighlight>
+            <Text style={styles.liveText}>Live</Text>
+         <Switch
+              onValueChange={this.showLiveLogs.bind(this)}
+              value={this.state.eventSwitchIsOn}
+               />
+    </View>
+  );
+}
+/*
+renderDateFilters(){
+  return (
+    <View style={styles.buttonsContainer}>
+       <TextInput style={styles.DateInput}
+         placeholder='Start Date'
+         value = {this.state.startDateString}
+         onChange={this.onStartDateTextChangedEvent.bind(this)}
+         keyboardType = 'default'
+         keyboardAppearance = 'dark'
+         clearButtonMode = 'while-editing'
+         enablesReturnKeyAutomatically = {true}
+         returnKeyType = 'done'
+         onKeyPress = {this.onkeyPressEvent.bind(this)}
+       />
+
+       <TextInput style={styles.DateInput}
+         placeholder='End Date'
+         value = {this.state.EndDateString}
+         onChange={this.onStartDateTextChangedEvent.bind(this)}
+         keyboardType = 'default'
+         keyboardAppearance = 'dark'
+         clearButtonMode = 'while-editing'
+         enablesReturnKeyAutomatically = {true}
+         returnKeyType = 'done'
+         onKeyPress = {this.onkeyPressEvent.bind(this)}
+       />
+    </View>
+  );
+}
+*/
+doneDatePicker()  {
+  console.log('done pressed');
+  this.setState({datePickerMode :'hidden'});
+  // search logs
+  filterLogParams.filterPattern = this.state.searchString;
+  var filterLogParamsCopy = deepcopy(filterLogParams);
+  if(this.state.selectedDatePicker === 'start') {
+    filterLogParamsCopy.startTime = this.state.startDate.getTime();
+  } else {
+    filterLogParamsCopy.endTime = this.state.endDate.getTime();
+  }
+  this.props.itemactions.getFilteredLogs(urlobj.getFilterLogEvents,undefined, filterLogParamsCopy,this.successcb);
+  this.setState({
+    isSearchingWithDateFilter:true,
+    loading: true
+  });
+
+}
+
+toggleStartDatePicker(){
+  DismissKeyboard()
+  var mode = 'visible'
+  if(this.state.selectedDatePicker !== 'end') {
+    console.log('in not end' );
+    mode = this.state.datePickerMode == 'hidden' ? 'visible' : 'hidden' ;
+  }
+  this.setState({datePickerMode:mode});
+  this.setState({selectedDatePicker:'start'});
+}
+toggleEndDatePicker() {
+  DismissKeyboard()
+  var mode = 'visible'
+  if(this.state.selectedDatePicker !== 'start') {
+    console.log('in not start' );
+    mode = this.state.datePickerMode == 'hidden' ? 'visible' : 'hidden' ;
+  }
+  this.setState({datePickerMode:mode});
+  this.setState({selectedDatePicker:'end'});
+}
+
+onDateChange(date) {
+  console.log('date');
+  console.log(date);
+  if( this.state.selectedDatePicker === 'start') {
+    this.setState({startDate: date});
+  } else if (this.state.selectedDatePicker === 'end') {
+    this.setState({endDate: date});
+  }
+}
+
+renderDateFilters() {
+  return (
+    <View style = {styles.buttonsContainer}>
+      <View style = {{padding:0, flex: 1}}>
+        <Text>StartDate</Text>
+        <TouchableWithoutFeedback onPress={this.toggleStartDatePicker.bind(this)} >
+          <View style={styles.DateInput}>
+            <Text>{this.state.startDate.getMonth()}/{ this.state.startDate.getDate() }/{this.state.startDate.getFullYear()}T
+            {this.state.startDate.getHours()}:{this.state.startDate.getMinutes()}</Text>
+          </View>
+        </TouchableWithoutFeedback>
+      </View>
+      <View style = {{padding:0, flex: 1}}>
+        <Text>EndDate</Text>
+        <TouchableWithoutFeedback onPress={this.toggleEndDatePicker.bind(this)} >
+        <View style={styles.DateInput}>
+          <Text>{this.state.endDate.getMonth()}/{ this.state.endDate.getDate() }/{this.state.endDate.getFullYear()}T
+          {this.state.endDate.getHours()}:{this.state.endDate.getMinutes()}</Text>
+        </View>
+        </TouchableWithoutFeedback>
+      </View>
+    </View>
+  );
+}
+
+rendeListView() {
+  return(
+    <ListView style={styles.listcontainer}
+        automaticallyAdjustContentInsets={false}
+        dataSource={this.state.dataSource}
+        renderRow={this.renderRow.bind(this)}
+        keyboardDismissMode='interactive'
+        // renderFooter={this.renderFooter.bind(this)}
+        //renderSectionHeader={this.renderSectionHeader.bind(this)}
+        //renderHeader={this.renderHeader.bind(this)}
+        //enableEmptySections= {true}
+      >
+      </ListView>
+  );
+}
+
+renderActivityIndicator() {
+  return (
+    <ActivityIndicatorIOS
+        style={[styles.centering, {height: 40}]}
+      />
+  );
+}
+
+datePicker() {
+  var date = this.state.selectedDatePicker === 'start' ? this.state.startDate : this.state.endDate
+  return(
+    <View style = { styles.datePicker }>
+      <TouchableOpacity onPress = { this.doneDatePicker.bind(this)} style = {{ padding:5 ,alignItems:'flex-end'}}>
+      <Text>Done</Text>
+      </TouchableOpacity>
+      <DatePickerIOS
+      date={date}
+      mode="datetime"
+      onDateChange={this.onDateChange.bind(this)} />
+    </View>
+  );
+}
+render() {
+    var spinner = (this.state.loading || this.state.isPagingNext) ? this.renderActivityIndicator(): ( null);
+    var datePicker = (this.state.datePickerMode === 'visible') ? this.datePicker() : <View/>
+    return (
+     <View style={styles.container}>
+        <View style={styles.sectionHeaderContainer}>
+          {this.renderSearchBar()}
+          {this.renderPrevNextAndLiveFilters()}
+          {this.renderDateFilters()}
+          {spinner}
+        </View>
+        {this.rendeListView()}
+        {datePicker}
+     </View>
    );
  }
+
+
+ // render() {
+ //   return (
+ //     <ListView
+ //     dataSource={this.state.dataSource}
+ //     renderRow={this.renderRow.bind(this)}
+ //     //renderSectionHeader={this.renderSectionHeader.bind(this)}
+ //     renderFooter={this.renderFooter.bind(this)}
+ //     renderHeader={this.renderHeader.bind(this)}
+ //     //enableEmptySections= {true}
+ //     />
+ //   );
+ // }
 }
 
 const mapStateToProps = (state) => ({
