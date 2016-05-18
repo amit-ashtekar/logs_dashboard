@@ -143,6 +143,9 @@ constructor(props) {
 }*/
 
 search(){
+  if(this.state.isLiveLogs===true){
+        this.showLiveLogs(false) 
+      }
   console.log("search query = " + this.state.searchString);
           this.setState({
             loading: true,
@@ -351,7 +354,7 @@ renderFooter() {
      
                                        
     </View>
-     <View style={styles.sectionContainer}>
+     <View style={styles.buttonContainer}>
 
          <TouchableHighlight 
           style={styles.button}
@@ -377,11 +380,9 @@ renderFooter() {
         <Text style={styles.buttonText}>Next</Text>
         </TouchableHighlight>
 
-       
-       
-       
       </View>
-          <View style={styles.sectionContainer}>
+
+      <View style={styles.sectionContainer}>
           <TextInput style={styles.searchInput}
             placeholder='Search'            
             onChange={this.onSearchTextChangedEvent.bind(this)}
@@ -390,7 +391,7 @@ renderFooter() {
             clearButtonMode = 'always'                       
             onSubmitEditing={this.search.bind(this)}            
           />
-          </View>
+      </View>
 
     <ListView
      dataSource={this.state.dataSource}
@@ -419,104 +420,106 @@ const mapDispatchToProps = (dispatch) => ({
 export default connect(mapStateToProps,mapDispatchToProps)(SearchLogsView);
 
 var styles = StyleSheet.create({
+    
   container: {
-    flex: 1,
-    backgroundColor: '#FFF',
-  },
-   textContainer: {
-     flex: 1
-   },
-   loadingFooterContainer: {
-     flex: 1,
-     backgroundColor: '#dddddd',
-     flexDirection: 'row',     
-     justifyContent: 'center',
-     padding:10,
-   },
-   separator: {
-     height: 1,
-     //  backgroundColor: '#dddddd'
-     backgroundColor: '#fefefe'
-   },
-   loadingText: {
-     fontSize: 14,
-     color: 'gray',
-     textAlign:'center'
-     
+       flex: 1,    
+       backgroundColor: '#FFF',
+    },
+  textContainer: {
+       flex: 1
+     },
+  loadingFooterContainer: {
+       flex: 1,
+       backgroundColor: '#dddddd',
+       flexDirection: 'row',     
+       justifyContent: 'center',
+       padding:10,
+     },
+  separator: {
+       height: 1,
+       backgroundColor: '#fefefe'
+     },
+  loadingText: {
+       fontSize: 14,
+       color: 'gray',
+       textAlign:'center'    
 
-   },
-   title: {
-     fontSize: 14,
-     color: '#0d0d0d'
-   },
-   log: {
-     fontSize: 12,
-     color: '#656565'
-   },
-   rowContainer: {
-     flexDirection: 'row',
-     padding: 10
-   },
-   sectionContainer: {
-     flexDirection: 'row',
-     padding: 5,
-     backgroundColor: '#C9C9C9',
-   },
-   searchInput: {
-     height: 31,
-     flex: 1,
-     padding:5,
-     marginRight: 5,     
-     marginLeft: 5,
-     fontSize: 15,
-     borderWidth: 1,
-     borderColor: '#b4b4b4',
-     borderRadius: 6,
-    backgroundColor: '#ffffff',
+     },
+  title: {
+       fontSize: 14,
+       color: '#0d0d0d'
+     },
+  log: {
+       fontSize: 12,
+       color: '#656565'
+     },
+  rowContainer: {
+       flexDirection: 'row',
+       padding: 10
+     },
+  sectionContainer: {
+         flexDirection: 'row',
+         padding: 5,
+         backgroundColor: '#C9C9C9',
+     },
+  searchInput: {
+        height: 31,
+        flex: 1,
+        padding:5,
+        marginRight: 5,     
+        marginLeft: 5,
+        fontSize: 15,
+        borderWidth: 1,
+        borderColor: '#b4b4b4',
+        borderRadius: 6,
+        backgroundColor: '#ffffff',
   },
   rowStyle: {
-     backgroundColor: '#CABEAD',
+        backgroundColor: '#CABEAD',
   },
   evenRowStyle: {
-     backgroundColor: '#F0E197',
-  },
-  toolbar:{
+        backgroundColor: '#F0E197',
+    },
+  toolbar:{            
         backgroundColor:'#EEB211',
         paddingTop:30,
         paddingBottom:10,
         flexDirection:'row'    //Step 1
     },
-    toolbarButton:{
-        width: 50,        //Step 2
+  toolbarButton:{        width: 50,        //Step 2
         
         marginLeft:5,
         textAlign:'center',
         fontSize:20
     },
-    toolbarTitle:{        
+  toolbarTitle:{        
         fontSize:25,
         textAlign:'center',
         fontWeight:'bold',
         flex:1                //Step 3
     },
-    button: {
-           
-      height: 40,
-      marginTop: 10,
-      margin:5,
-      backgroundColor: '#EEB211',
-      borderColor: '#EEB211',
-      borderWidth: 1,
-      borderRadius: 8,
-      marginBottom: 10,
+  button: {               
+        flex:1,
+        height: 40,
+        margin:5,
+        backgroundColor: '#EEB211',
+        borderColor: '#EEB211',
+        borderWidth: 1,
+        borderRadius: 8,
+      
       justifyContent: 'center'
-  },
-    buttonText: {
-      fontSize: 18,
-      textAlign: 'center',
-      margin: 10,
-      color: 'white'
-  },
+    },
+  buttonText: {
+        fontSize: 16,
+        textAlign: 'center',
+        margin: 5,
+        color: 'white'
+    },
+  buttonContainer: {     
+        flexDirection: 'row',
+        padding: 5,
+        backgroundColor: '#C9C9C9',
+   },
 
  });
 
