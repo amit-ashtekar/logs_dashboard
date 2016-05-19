@@ -17,6 +17,7 @@ import {urlobj} from 'common/apiurls';
 var DismissKeyboard = require('dismissKeyboard');
 var deepcopy = require("deepcopy");
 
+var Subscribable = require('Subscribable');
 
  var {
    StyleSheet,
@@ -209,14 +210,17 @@ constructor(props) {
     startDate: new Date(),
     endDate : new Date(),
     selectedDatePicker: 'start', // or 'end'
-    isSearchingWithDateFilter: false
+    isSearchingWithDateFilter: false,
+    mixins: [Subscribable.Mixin],
+    isAdvanceFilterOn: false
   }
  }
 
  componentWillMount (){
+   this.props.events.addListener('rightButtonPressed', this.onAdvancePress.bind(this));
+
     this.props.itemactions.getItems(urlobj.getItems,undefined, logEventsConfig,this.successcb);
     this.setState({ loading: true });
-
 
     // var _getLogEvents = {}
     //  this.props.itemactions.getLiveLogs(urlobj.getLiveLogs,_getLogEvents,this.successcb);
@@ -227,6 +231,16 @@ constructor(props) {
   //  this.setState({searchString : "TRACE PerformanceMonitorInterceptor"})
   //  console.log("searchString = " + this.state.searchString);
  }
+
+ onAdvancePress(){
+   console.log('onAdvancePress');
+         this.setState({
+             isAdvanceFilterOn: !(this.state.isAdvanceFilterOn)
+         });
+         console.log("isAdvanceFilterOn");
+         console.log(this.state.isAdvanceFilterOn);
+     }
+
 
  componentWillReceiveProps(nextProps) {
     console.log("componentWillReceiveProps");
@@ -541,37 +555,7 @@ renderPrevNextAndLiveFilters(){
     </View>
   );
 }
-/*
-renderDateFilters(){
-  return (
-    <View style={styles.buttonsContainer}>
-       <TextInput style={styles.DateInput}
-         placeholder='Start Date'
-         value = {this.state.startDateString}
-         onChange={this.onStartDateTextChangedEvent.bind(this)}
-         keyboardType = 'default'
-         keyboardAppearance = 'dark'
-         clearButtonMode = 'while-editing'
-         enablesReturnKeyAutomatically = {true}
-         returnKeyType = 'done'
-         onKeyPress = {this.onkeyPressEvent.bind(this)}
-       />
 
-       <TextInput style={styles.DateInput}
-         placeholder='End Date'
-         value = {this.state.EndDateString}
-         onChange={this.onStartDateTextChangedEvent.bind(this)}
-         keyboardType = 'default'
-         keyboardAppearance = 'dark'
-         clearButtonMode = 'while-editing'
-         enablesReturnKeyAutomatically = {true}
-         returnKeyType = 'done'
-         onKeyPress = {this.onkeyPressEvent.bind(this)}
-       />
-    </View>
-  );
-}
-*/
 doneDatePicker()  {
   console.log('done pressed');
   this.setState({datePickerMode :'hidden'});
@@ -685,15 +669,23 @@ datePicker() {
     </View>
   );
 }
+
+renderAdvancefilter() {
+  return(
+    <View>
+      {this.renderPrevNextAndLiveFilters()}
+      {this.renderDateFilters()}
+  </View>);
+}
 render() {
     var spinner = (this.state.loading || this.state.isPagingNext) ? this.renderActivityIndicator(): ( null);
     var datePicker = (this.state.datePickerMode === 'visible') ? this.datePicker() : <View/>
+    var advancefilterView = this.state.isAdvanceFilterOn ? this.renderAdvancefilter() : <View/>
     return (
      <View style={styles.container}>
         <View style={styles.sectionHeaderContainer}>
           {this.renderSearchBar()}
-          {this.renderPrevNextAndLiveFilters()}
-          {this.renderDateFilters()}
+          {advancefilterView}
           {spinner}
         </View>
         {this.rendeListView()}
