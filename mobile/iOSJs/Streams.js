@@ -16,8 +16,9 @@ import * as groupWebActionCreators from 'common/webServices/dropdownList';
 import * as groupActionCreators from 'common/actions/dropdown';
 import {urlobj} from 'common/apiurls';
 
-
-  var React = require('react-native')
+var Subscribable = require('Subscribable');
+var EventEmitter = require('EventEmitter');
+var React = require('react-native')
 
 
  var {
@@ -53,6 +54,7 @@ import {urlobj} from 'common/apiurls';
 
  // var MOCKED_DATA =  ['Stream 1', 'Stream 2', 'Stream 3', 'Stream 4'];
 
+var rightButtonHandler = new EventEmitter()
 
 class Streams extends Component {
 
@@ -72,6 +74,7 @@ constructor(props) {
 
   componentWillMount (){
     // this.props.streamwebactions.getGroups(urlobj.getGroups);
+    this.eventEmitter = new EventEmitter();
     this.props.streamwebactions.getStreams(urlobj.getStreams);
 
       console.log('this.props: ');
@@ -86,11 +89,21 @@ constructor(props) {
   });
   }
 
+  onRightButtonPress() {
+   rightButtonHandler.emit('rightButtonPressed', { someArg: 'argValue' });
+  }
+
+
   rowPressed(guid) {
     console.log('row pressed' + {guid});
     this.props.navigator.push ({
       title: 'Logs',
-      component: SearchLogs
+      component: SearchLogs,
+      rightButtonTitle: 'Advance',
+                    onRightButtonPress: this.onRightButtonPress,
+                    passProps: {
+                        events: rightButtonHandler
+                    }
     });
   }
 
