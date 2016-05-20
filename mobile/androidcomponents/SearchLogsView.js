@@ -12,8 +12,9 @@ import { bindActionCreators } from 'redux'
 import * as itemActionCreators from 'common/webServices/itemService';
 import {logEventsConfig, filterLogParams} from 'common/AWSConfig/config.js';
 import {urlobj} from 'common/apiurls';
-import { Button, Card } from 'react-native-material-design';
+//import { Button, Card } from 'react-native-material-design';
 import moment from 'moment';
+import { Button, Subheader, COLOR } from 'react-native-material-design';
 
 
  import React, {
@@ -55,6 +56,9 @@ constructor(props) {
     endTime:'',
     value:'0',
     simpleText: 'pick a date',
+    localLogEventsConfig: {},
+    isPagingNext: false,
+    isNextPrevDisabled:false,
   }
  }
 
@@ -76,8 +80,25 @@ constructor(props) {
 
  componentWillReceiveProps(nextProps) {
     console.log("componentWillReceiveProps");
-
-    if(this.state.isLiveLogs === true) {      
+     if(this.state.isPagingNext === true) { 
+     //console.log("isPagingNext");// paging Next, Prev
+      if(nextProps.items[0].events.length) { 
+      console.log("isPagingNext");/// if dtata is there, update tokens and reload list
+        this.setState({
+          isPagingNext: false,
+          localLogEventsConfig: {
+            'nextForwardToken':nextProps.items[0].nextForwardToken,
+            'nextBackwardToken': nextProps.items[0].nextBackwardToken
+          },
+          dataSource: this.state.dataSource.cloneWithRows(nextProps.items[0].events),
+          loading:false,
+        });
+      } else {
+        this.setState({
+          isPagingNext: false,
+        });
+      }
+    }else if(this.state.isLiveLogs === true) {      
       console.log("live logs....");
       var index = nextProps.items.length > 0 ? nextProps.items.length -1 : 0
       console.log(nextProps.items[index].events);
@@ -88,7 +109,11 @@ constructor(props) {
       this.setState({
         resultArray: this.state.resultArray.concat(result),
         dataSource: this.state.dataSource.cloneWithRows(this.state.resultArray),
-        loading: false
+        loading: false,
+        localLogEventsConfig: {
+            'nextForwardToken':nextProps.items[0].nextForwardToken,
+            'nextBackwardToken': nextProps.items[0].nextBackwardToken
+          }
       });
       
     } else if(this.state.isSearching === true) {
@@ -107,10 +132,15 @@ constructor(props) {
      console.log(nextProps.items[0].events);
 
       this.setState({
+        localLogEventsConfig: {
+        'nextForwardToken':nextProps.items[0].nextForwardToken,
+        'nextBackwardToken': nextProps.items[0].nextBackwardToken
+      },
         dataSource: this.state.dataSource.cloneWithRows(nextProps.items[0].events),
         loading: false,
         startTime:'',
         endTime:''
+
 
       });
  }
@@ -151,6 +181,7 @@ search(){
             loading: true,
             dataSource: this.state.dataSource.cloneWithRows([]),
             isSearching : true,
+            isNextPrevDisabled:true,
           });
           filterLogParams.filterPattern = this.state.searchString;
           this.props.itemactions.getFilteredLogs(urlobj.getFilterLogEvents,undefined, filterLogParams,this.successcb);
@@ -178,6 +209,7 @@ search(){
             loading: true,
             dataSource: this.state.dataSource.cloneWithRows([]),            
             isLiveLogs: true,
+            isNextPrevDisabled:true,
           });
        this.props.itemactions.getLiveLogs(urlobj.getLiveLogs,_getLogEvents,this.successcb);
         
@@ -189,6 +221,7 @@ search(){
             loading: true,
             dataSource: this.state.dataSource.cloneWithRows([]),            
             isLiveLogs: false,
+            isNextPrevDisabled:false,
           });     
        console.log('LiveLogHandler unsubscribe...');
        console.log(this.props.LiveLogHandler.LiveLogHandler);
@@ -196,23 +229,7 @@ search(){
        this.props.LiveLogHandler.LiveLogHandler.unsubscribe();
        this.loadDefaultLogs();
      }
-    onFilter() {
-     /*console.log('Filter');
-
-     this.setState({filterPattern: "Space"});
-     filterLogParams.filterPattern = "success";
-
-     this.setState({
-            loading: true,
-            dataSource: this.state.dataSource.cloneWithRows([]),
-            isSearching : true,
-          });
-          //filterLogParams.filterPattern = this.state.searchString;
-          this.props.itemactions.getFilteredLogs(urlobj.getFilterLogEvents,undefined, filterLogParams,this.successcb);
-          */
-          //this.search();
-    
-   }
+   
 
     onHandleStartDateChange(value){   
       if(this.state.isLiveLogs===true){
@@ -221,7 +238,8 @@ search(){
       console.log("onHandleStartDateChange()",value)
       this.setState({
             loading: true,
-            dataSource: this.state.dataSource.cloneWithRows([]),            
+            dataSource: this.state.dataSource.cloneWithRows([]), 
+            isNextPrevDisabled:true,           
           });
           
           if(value ==='start'){  
@@ -245,54 +263,60 @@ search(){
 
 
 
-    onNextPressed() {
-       console.log('**Next**');
-     }
-
-     onPrevPressed() {
-       console.log('**Prev**');
-     }
-  async showPicker(stateKey, options) {
-   console.log('BIPIN',stateKey);
-    try {
-      var newState = {};
-      const {action, year, month, day} = await DatePickerAndroid.open(options);
-      if (action === DatePickerAndroid.dismissedAction) {
-        newState[stateKey + 'Text'] = 'dismissed';
-      } else {
-        //var date = new Date(year,month,day);
-        /*var d = new Date();
-        var milliseconds = d.getMilliseconds();
-        var seconds=d.getSeconds();
-        var minutes=d.getMinutes();
-        var hours=d.getHours();*/
-        //var date = new Date(year, month, day, hours, minutes, seconds, milliseconds); 
-        var date = new Date(year, month, day); 
-        // console.warn(`Error in example get date : `, date.getTime());
-         //console.warn(`Error in example get timeInMiliSeconds : `, milliseconds);
-        // console.warn(`Error in example get timeInMiliSeconds : `, d.getMinutes());
-      
-        //newState[stateKey + 'Text'] = date.toLocaleDateString();
-        //var stringTemp=moment(new Date(year, month, day)).format('MM/DD/YYYY');
-        var dateTime = date.getTime(); 
-        //console.warn(`Error in example get timeInMiliSeconds : `, stringTemp);
-        
-        //newState[stateKey + 'Date'] = date;
-       if(stateKey==='start'){
-            this.setState({startTime:dateTime});
-            this.onHandleStartDateChange('start');
-        }else{
-            this.setState({endTime:dateTime});
-            this.onHandleStartDateChange('end');
-
-        }
+onNextPressed() {
+      console.log('**Next**');
+      console.log(this.state.localLogEventsConfig);
+      if(this.state.isLiveLogs === true) {
+        this.showLiveLogs(false)
       }
-      //var stringTemp=moment(new Date(year, month, day)).format('MM/DD/YYYY')
-      //var stringTemp='';
-      //var stringTemp=stringTemp.concat(date.getMonth()).concat(date.getDate()).concat(date.getFullYear());
-      //console.warn(`Error in bpn '${stateKey}': `, this.state.startTime);
-    } catch ({code, message}) {
-      console.warn(`Error in example '${stateKey}': `, message);
+      this.setState({
+        loading: true,
+        isPagingNext: true,
+        dataSource: this.state.dataSource.cloneWithRows([]),
+        // dataSource: this.state.dataSource.cloneWithRows([])
+      });
+      this.props.itemactions.getItems(urlobj.getItems,'Next', this.state.localLogEventsConfig, this.successcb);
+     }
+
+onPrevPressed() {
+       console.log('**Prev**');
+       console.log(this.state.localLogEventsConfig);
+       if(this.state.isLiveLogs === true) {
+         this.showLiveLogs(false)
+       }
+       this.setState({
+        loading: true,
+         isPagingNext: true,
+         dataSource: this.state.dataSource.cloneWithRows([]),
+       });
+       this.props.itemactions.getItems(urlobj.getItems,'Prev', this.state.localLogEventsConfig, this.successcb);
+     }
+
+async showPicker(stateKey, options) {
+           
+    console.log('BIPIN',stateKey);
+    try {        
+        const {action, year, month, day} = await DatePickerAndroid.open(options);
+        if (action === DatePickerAndroid.dismissedAction) {
+          newState[stateKey + 'Text'] = 'dismissed';
+        } else {
+          
+          var date = new Date(year, month, day); 
+          
+          var dateTime = date.getTime(); 
+          
+         if(stateKey==='start'){
+              this.setState({startTime:dateTime});
+              this.onHandleStartDateChange('start');
+          }else{
+              this.setState({endTime:dateTime});
+              this.onHandleStartDateChange('end');
+
+          }
+      }
+      
+        } catch ({code, message}) {
+          console.warn(`Error in example '${stateKey}': `, message);
     }
   }
 renderFooter() {
@@ -356,6 +380,8 @@ renderFooter() {
     </View>
      <View style={styles.buttonContainer}>
 
+     
+
          <TouchableHighlight 
           style={styles.button}
         onPress={this.showPicker.bind(this, 'start', {date: this.state.simpleDate})}> 
@@ -368,17 +394,20 @@ renderFooter() {
         <Text style={styles.buttonText}>Filter By End Date</Text> 
         </TouchableHighlight>
         
-        <TouchableHighlight style={styles.button}
-        underlayColor='#F5FCFF'
-        onPress={this.onPrevPressed.bind(this)}>
-        <Text style={styles.buttonText}>Previous</Text>
-        </TouchableHighlight>
+        <Button
 
-        <TouchableHighlight style={styles.button}
-        underlayColor='#F5FCFF'
-        onPress={this.onNextPressed.bind(this)}>
-        <Text style={styles.buttonText}>Next</Text>
-        </TouchableHighlight>
+        style={styles.buttonText}
+        text="<<Previous"
+        disabled={this.state.isNextPrevDisabled}        
+        onPress={this.onPrevPressed.bind(this)}>        
+        </Button>
+
+        <Button
+        style={styles.button}
+        text="Next>>"
+        disabled={this.state.isNextPrevDisabled}        
+        onPress={this.onNextPressed.bind(this)}>        
+        </Button>
 
       </View>
 
