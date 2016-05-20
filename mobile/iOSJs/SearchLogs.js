@@ -34,7 +34,8 @@ var Subscribable = require('Subscribable');
    ActivityIndicatorIOS,
    DatePickerIOS,
    TouchableWithoutFeedback,
-   TouchableOpacity
+   TouchableOpacity,
+   LayoutAnimation
 
  } = React;
 
@@ -234,13 +235,39 @@ constructor(props) {
 
  onAdvancePress(){
    console.log('onAdvancePress');
-         this.setState({
-             isAdvanceFilterOn: !(this.state.isAdvanceFilterOn)
-         });
-         console.log("isAdvanceFilterOn");
-         console.log(this.state.isAdvanceFilterOn);
-     }
+       // Spring
+    var CustomLayoutSpring = {
+        duration: 400,
+        create: {
+          type: LayoutAnimation.Types.spring,
+          property: LayoutAnimation.Properties.scaleXY,
+          springDamping: 0.7,
+        },
+        update: {
+          type: LayoutAnimation.Types.spring,
+          springDamping: 0.7,
+        },
+      };
 
+    // Linear with easing
+     var CustomLayoutLinear = {
+        duration: 200,
+        create: {
+          type: LayoutAnimation.Types.linear,
+          property: LayoutAnimation.Properties.opacity,
+        },
+        update: {
+          type: LayoutAnimation.Types.curveEaseInEaseOut,
+        },
+      };
+      LayoutAnimation.configureNext(CustomLayoutSpring);
+      // LayoutAnimation.configureNext(LayoutAnimation.Presets.spring);
+       this.setState({
+           isAdvanceFilterOn: !(this.state.isAdvanceFilterOn)
+       });
+       console.log("isAdvanceFilterOn");
+       console.log(this.state.isAdvanceFilterOn);
+    }
 
  componentWillReceiveProps(nextProps) {
     console.log("componentWillReceiveProps");
