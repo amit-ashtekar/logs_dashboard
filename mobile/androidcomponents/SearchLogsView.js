@@ -273,6 +273,7 @@ onNextPressed() {
         loading: true,
         isPagingNext: true,
         dataSource: this.state.dataSource.cloneWithRows([]),
+
         // dataSource: this.state.dataSource.cloneWithRows([])
       });
       this.props.itemactions.getItems(urlobj.getItems,'Next', this.state.localLogEventsConfig, this.successcb);
@@ -298,7 +299,7 @@ async showPicker(stateKey, options) {
     try {        
         const {action, year, month, day} = await DatePickerAndroid.open(options);
         if (action === DatePickerAndroid.dismissedAction) {
-          newState[stateKey + 'Text'] = 'dismissed';
+          //newState[stateKey + 'Text'] = 'dismissed';
         } else {
           
           var date = new Date(year, month, day); 
@@ -334,6 +335,13 @@ renderFooter() {
    }
  }
 
+ onContentSizeChange(){
+  if(this.state.loading){
+      this.listView.scrollTo({y:0});
+    }
+  
+ }
+
  renderRow(rowData, sectionID, rowID) {
    //{ timestamp: 1462275978058, message: 'Exception in thread "ActiveMQ InactivityMonitor Worker" ', ingestionTime: 1462275983749 }
    var time = this.epochToJsDate(rowData.timestamp)
@@ -341,6 +349,7 @@ renderFooter() {
    var ingestionTime  = this.epochToJsDate(rowData.ingestionTime)
    let rowStyle = rowID % 2 === 0 ?  styles.rowStyle : styles.evenRowStyle
    return (
+
  <TouchableHighlight onPress={() => this.rowPressed(rowData)}
      underlayColor='#dddddd' style={rowStyle}>
    <View>
@@ -395,7 +404,7 @@ renderFooter() {
         </TouchableHighlight>
         
         <Button
-
+        raised={true}
         style={styles.buttonText}
         text="<<Previous"
         disabled={this.state.isNextPrevDisabled}        
@@ -403,6 +412,7 @@ renderFooter() {
         </Button>
 
         <Button
+        raised={true}
         style={styles.button}
         text="Next>>"
         disabled={this.state.isNextPrevDisabled}        
@@ -423,10 +433,12 @@ renderFooter() {
       </View>
 
     <ListView
+    ref={ref => this.listView = ref}
      dataSource={this.state.dataSource}
      renderRow={this.renderRow.bind(this)}
      //renderSectionHeader={this.renderSectionHeader.bind(this)}
      renderFooter={this.renderFooter.bind(this)}
+     onContentSizeChange={this.onContentSizeChange.bind(this)}
      />
      </View>
   
