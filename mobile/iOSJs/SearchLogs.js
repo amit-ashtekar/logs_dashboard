@@ -35,7 +35,8 @@ var Subscribable = require('Subscribable');
    DatePickerIOS,
    TouchableWithoutFeedback,
    TouchableOpacity,
-   LayoutAnimation
+   LayoutAnimation,
+   SegmentedControlIOS
 
  } = React;
 
@@ -130,12 +131,12 @@ var Subscribable = require('Subscribable');
      backgroundColor: '#F0E197',
   },
 button: {
-  height: 30,
+  height: 25,
   marginLeft: 5,
   backgroundColor: '#F8CA1E',
   borderColor: 'gray',
   borderWidth: 1,
-  borderRadius: 8,
+  borderRadius: 3,
   justifyContent: 'center'
 },
 buttonText: {
@@ -213,7 +214,8 @@ constructor(props) {
     selectedDatePicker: 'start', // or 'end'
     isSearchingWithDateFilter: false,
     mixins: [Subscribable.Mixin],
-    isAdvanceFilterOn: false
+    isAdvanceFilterOn: false,
+    selectedIndex: 0
   }
  }
 
@@ -222,12 +224,12 @@ constructor(props) {
 
     this.props.itemactions.getItems(urlobj.getItems,undefined, logEventsConfig,this.successcb);
     this.setState({ loading: true });
-
     // var _getLogEvents = {}
     //  this.props.itemactions.getLiveLogs(urlobj.getLiveLogs,_getLogEvents,this.successcb);
     //  this.setState({ isLiveLogs: true });
     //  this.props.itemactions.getFilteredLogs(urlobj.getFilterLogEvents,undefined, filterLogParams,this.successcb);
  }
+
  componentDidMount() {
   //  this.setState({searchString : "TRACE PerformanceMonitorInterceptor"})
   //  console.log("searchString = " + this.state.searchString);
@@ -341,6 +343,10 @@ constructor(props) {
    this.setState({ searchString: event.nativeEvent.text });
   }
 
+  onSearchFocus(event) {
+    console.log('test begin editng');
+    this.setState({datePickerMode:'hidden'});
+  }
   onStartDateTextChangedEvent(event) {
     this.setState({ startDateString: event.nativeEvent.text });
    }
@@ -349,13 +355,9 @@ constructor(props) {
     if(event.nativeEvent.key === "Enter"){
           console.log("search query = " + this.state.searchString);
           console.log(this.state.isLiveLogs);
-          if (this.state.isLiveLogs === true) {
-            this.unsubscribeLiveLogs();
-            console.log("search query unsubscribeLiveLogs ");
-          }
+          this.turnOffLiveLogs();
 
           this.setState({
-            eventSwitchIsOn: false,
             datePickerMode:'hidden',
             loading: true,
             dataSource: this.state.dataSource.cloneWithRows([]),
@@ -363,7 +365,19 @@ constructor(props) {
           });
 
           filterLogParams.filterPattern = this.state.searchString;
-          this.props.itemactions.getFilteredLogs(urlobj.getFilterLogEvents,undefined, filterLogParams,this.successcb);
+
+          switch (this.state.selectedIndex) {
+            case 0:
+              this.props.itemactions.getFilteredLogs(urlobj.getFilterLogEvents,undefined, filterLogParams,this.successcb);
+              break;
+            case 2:
+            case 3:
+            case 4:
+              this.doneDatePicker();
+              break;
+            default:
+
+          }
     }
    }
 
@@ -391,9 +405,7 @@ constructor(props) {
      onNextPressed() {
       console.log('**Next**');
       console.log(this.state.localLogEventsConfig);
-      if(this.state.isLiveLogs === true) {
-        this.showLiveLogs(false)
-      }
+      this.turnOffLiveLogs();
       this.setState({
         isPagingNext: true,
         // dataSource: this.state.dataSource.cloneWithRows([])
@@ -404,9 +416,7 @@ constructor(props) {
      onPrevPressed() {
        console.log('**Prev**');
        console.log(this.state.localLogEventsConfig);
-       if(this.state.isLiveLogs === true) {
-         this.showLiveLogs(false)
-       }
+       this.turnOffLiveLogs();
        this.setState({
          isPagingNext: true,
          //dataSource: this.state.dataSource.cloneWithRows(['1'])
@@ -424,8 +434,6 @@ constructor(props) {
          this.unsubscribeLiveLogs();
           this.setState({eventSwitchIsOn: false})
        }
-
-
      }
 
      subscribeLiveLogs() {
@@ -449,6 +457,14 @@ constructor(props) {
        this.setState({ isLiveLogs: false });
        this.props.LiveLogHandler.LiveLogHandler.unsubscribe();
        console.log('\n\n****** unsubscribeLiveLogs **********\n\n');
+     }
+
+     turnOffLiveLogs() {
+       if (this.state.isLiveLogs === true) {
+         this.unsubscribeLiveLogs();
+         console.log('turnOffLiveLogs: done');
+       }
+       this.setState({eventSwitchIsOn: false});
      }
 
 /*
@@ -551,19 +567,166 @@ renderSearchBar() {
         enablesReturnKeyAutomatically = {true}
         returnKeyType = 'search'
         onKeyPress = {this.onkeyPressEvent.bind(this)}
+        onFocus = {this.onSearchFocus.bind(this)}
       />
     </View>
   );
 }
 
+renderSegmentedControl() {
+  return (
+    <View style={styles.buttonsContainer}>
+      <SegmentedControlIOS style={{flex:1}}
+        values={['Defualt','Pages','StartDt', 'EndDt', "Range", 'Live']}
+        selectedIndex={this.state.selectedIndex}
+        onChange={(event) => {
+        this.setState({selectedIndex: event.nativeEvent.selectedSegmentIndex});
+        }}
+        tintColor = '#F8CA1E'
+      />
+    </View>
+  );
+}
+
+renderSegmentedControlStartDate() {
+  return(
+    <View style = {styles.buttonsContainer}>
+        <Text>StartDate</Text>
+        <TouchableWithoutFeedback onPress={this.toggleStartDatePicker.bind(this)} >
+          <View style={styles.DateInput}>
+            <Text>{this.state.startDate.getMonth()}/{ this.state.startDate.getDate() }/{this.state.startDate.getFullYear()}T
+            {this.state.startDate.getHours()}:{this.state.startDate.getMinutes()}</Text>
+          </View>
+        </TouchableWithoutFeedback>
+    </View>
+  );
+}
+renderSegmentedControlEndDate() {
+  return(
+
+    <View style = {styles.buttonsContainer}>
+        <Text>EndDate</Text>
+        <TouchableWithoutFeedback onPress={this.toggleEndDatePicker.bind(this)} >
+        <View style={styles.DateInput}>
+          <Text>{this.state.endDate.getMonth()}/{ this.state.endDate.getDate() }/{this.state.endDate.getFullYear()}T
+          {this.state.endDate.getHours()}:{this.state.endDate.getMinutes()}</Text>
+        </View>
+        </TouchableWithoutFeedback>
+    </View>
+  );
+}
+renderSegmentedControlDateRange() {
+  return(
+    <View style = {styles.buttonsContainer}>
+      <View style = {{padding:0, flex: 1}}>
+        <Text>StartDate</Text>
+        <TouchableWithoutFeedback onPress={this.toggleStartDatePicker.bind(this)} >
+          <View style={styles.DateInput}>
+            <Text>{this.state.startDate.getMonth()}/{ this.state.startDate.getDate() }/{this.state.startDate.getFullYear()}T
+            {this.state.startDate.getHours()}:{this.state.startDate.getMinutes()}</Text>
+          </View>
+        </TouchableWithoutFeedback>
+      </View>
+      <View style = {{padding:0, flex: 1}}>
+        <Text>EndDate</Text>
+        <TouchableWithoutFeedback onPress={this.toggleEndDatePicker.bind(this)} >
+        <View style={styles.DateInput}>
+          <Text>{this.state.endDate.getMonth()}/{ this.state.endDate.getDate() }/{this.state.endDate.getFullYear()}T
+          {this.state.endDate.getHours()}:{this.state.endDate.getMinutes()}</Text>
+        </View>
+        </TouchableWithoutFeedback>
+      </View>
+    </View>
+  );
+}
+
+renderSegmentedControlLive() {
+  return(
+    <View style={styles.buttonsContainer}>
+    <Text style={styles.buttonText}>Live Logs</Text>
+      <Switch style = {{padding: 0}}
+        onValueChange={this.showLiveLogs.bind(this)}
+        value={this.state.eventSwitchIsOn}
+       />
+    </View>
+  );
+}
+renderSegmentedControlPaging() {
+  return(
+    <View style={styles.buttonsContainer}>
+         <TouchableHighlight style={styles.button}
+             underlayColor='#F5FCFF'
+             onPress={this.onPrevPressed.bind(this)}>
+             <Text style={styles.buttonText}>Prev</Text>
+         </TouchableHighlight>
+         <TouchableHighlight style={styles.button}
+             underlayColor='#F5FCFF'
+             onPress={this.onNextPressed.bind(this)}>
+             <Text style={styles.buttonText}>Next</Text>
+         </TouchableHighlight>
+    </View>
+  );
+}
+
+renderselectedIndex() {
+
+  var CustomLayoutLinear = {
+     duration: 200,
+     create: {
+       type: LayoutAnimation.Types.linear,
+       property: LayoutAnimation.Properties.opacity,
+     },
+     update: {
+       type: LayoutAnimation.Types.curveEaseInEaseOut,
+     },
+   };
+   var CustomLayoutSpring = {
+       duration: 400,
+       create: {
+         type: LayoutAnimation.Types.spring,
+         property: LayoutAnimation.Properties.scaleXY,
+         springDamping: 0.7,
+       },
+       update: {
+         type: LayoutAnimation.Types.spring,
+         springDamping: 0.7,
+       },
+     };
+     LayoutAnimation.configureNext(CustomLayoutSpring);
+
+  var view_ = <View/>
+  switch (this.state.selectedIndex) {
+    case 1:
+        view_ = this.renderSegmentedControlPaging()
+      break;
+    case 2:
+        view_ = this.renderSegmentedControlStartDate()
+    break;
+    case 3:
+        view_ = this.renderSegmentedControlEndDate()
+    break;
+    case 4:
+        view_ = this.renderSegmentedControlDateRange()
+    break;
+    case 5:
+        view_ = this.renderSegmentedControlLive()
+    break;
+    default:
+    view_ = <View/>
+
+  }
+  return(
+    <View>
+      {view_}
+    </View>
+  );
+}
+
+
+
 renderPrevNextAndLiveFilters(){
   return (
     <View style={styles.buttonsContainer}>
-        <TouchableHighlight style={styles.button}
-             underlayColor='#F5FCFF'
-             onPress={this.onFilter.bind(this)}>
-             <Text style={styles.buttonText}>Filter</Text>
-         </TouchableHighlight>
          <TouchableHighlight style={styles.button}
              underlayColor='#F5FCFF'
              onPress={this.onPrevPressed.bind(this)}>
@@ -587,19 +750,36 @@ doneDatePicker()  {
   console.log('done pressed');
   this.setState({datePickerMode :'hidden'});
   // search logs
+  this.turnOffLiveLogs();
   filterLogParams.filterPattern = this.state.searchString;
   var filterLogParamsCopy = deepcopy(filterLogParams);
-  if(this.state.selectedDatePicker === 'start') {
-    filterLogParamsCopy.startTime = this.state.startDate.getTime();
-  } else {
-    filterLogParamsCopy.endTime = this.state.endDate.getTime();
+  // if(this.state.selectedDatePicker === 'start') {
+  //   filterLogParamsCopy.startTime = this.state.startDate.getTime();
+  // } else {
+  //   filterLogParamsCopy.endTime = this.state.endDate.getTime();
+  // }
+  switch (this.state.selectedIndex) {
+    case 2:
+      filterLogParamsCopy.startTime = this.state.startDate.getTime();
+      break;
+    case 3:
+      filterLogParamsCopy.endTime = this.state.endDate.getTime();
+      break;
+    case 4:
+      filterLogParamsCopy.endTime = this.state.endDate.getTime();
+      filterLogParamsCopy.startTime = this.state.startDate.getTime();
+      break;
+    default:
   }
+
+
+  console.log('Search query advance filer:-');
+  console.log(filterLogParamsCopy);
   this.props.itemactions.getFilteredLogs(urlobj.getFilterLogEvents,undefined, filterLogParamsCopy,this.successcb);
   this.setState({
     isSearchingWithDateFilter:true,
     loading: true
   });
-
 }
 
 toggleStartDatePicker(){
@@ -697,13 +877,25 @@ datePicker() {
   );
 }
 
+// renderAdvancefilter() {
+//   return(
+//     <View>
+//       {this.renderPrevNextAndLiveFilters()}
+//       {this.renderDateFilters()}
+//   </View>);
+// }
+
 renderAdvancefilter() {
   return(
     <View>
-      {this.renderPrevNextAndLiveFilters()}
-      {this.renderDateFilters()}
+      {this.renderSegmentedControl()}
+      {this.renderselectedIndex()}
   </View>);
 }
+
+
+
+
 render() {
     var spinner = (this.state.loading || this.state.isPagingNext) ? this.renderActivityIndicator(): ( null);
     var datePicker = (this.state.datePickerMode === 'visible') ? this.datePicker() : <View/>
