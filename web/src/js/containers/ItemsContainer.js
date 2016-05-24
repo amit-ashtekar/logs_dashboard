@@ -22,7 +22,6 @@ export default class ItemContainer extends React.Component {
 
     }
     componentWillReceiveProps(nextProps){
-        debugger;
         //if(nextProps.stream["stream"]){
         //    this.props.itemactions.getItems();
         //}
