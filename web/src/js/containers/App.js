@@ -43,7 +43,7 @@ export default class CoreLayout extends React.Component {
         <Link  to="/">Home</Link>
         </li>
         <li>
-        <Link  to="/login">Login</Link>
+        <Link  to="/itemcontainer">Dashboard</Link>
         </li>
 
         </ul>
