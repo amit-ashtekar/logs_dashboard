@@ -427,6 +427,7 @@ renderFooter() {
 }
  render() {
    return (
+    
    <View style={styles.container}>
     <View style={styles.toolbar}>
                 <TouchableHighlight                
@@ -471,6 +472,11 @@ renderFooter() {
             </TouchableHighlight>
 
         </View>
+
+        
+        <Text style={styles.buttonTextSmall}>{this.state.simpleDate}</Text>
+       
+       
         
     </View>
 
@@ -481,12 +487,9 @@ renderFooter() {
         onPress={this.onNextPressed.bind(this)}>        
     </Button>
 
-      </View>
+       </View>
       
-      <View style={styles.buttonContainerVertical}>
-        
-        <Text style={styles.buttonTextSmall}>{this.state.simpleDate}</Text>
-        </View>
+      
 
       <View style={styles.sectionContainer}>
           <TextInput style={styles.searchInput}
@@ -509,6 +512,7 @@ renderFooter() {
      onContentSizeChange={this.onContentSizeChange.bind(this)}
      />
      </View>
+     
   
    );
  }
@@ -610,7 +614,7 @@ var styles = StyleSheet.create({
   button: {               
         width:70,
         height: 40,
-        margin:1,
+        
         backgroundColor: '#EEB211',
         borderColor: '#EEB211',
         borderWidth: 1,
@@ -620,24 +624,24 @@ var styles = StyleSheet.create({
     buttonPrev: {               
         width:70,
         height: 40,
-        margin:1,
+        
         backgroundColor: '#EEB211',
         borderColor: '#EEB211',
         borderWidth: 1,
         borderRadius: 8,      
         justifyContent: 'center',
-        alignItems:'flex-start'
+       
     },
     buttonNext: {               
         width:70,
         height: 40,
-        margin:1,
+        
         backgroundColor: '#EEB211',
         borderColor: '#EEB211',
         borderWidth: 1,
         borderRadius: 8,      
         justifyContent: 'center',
-        alignItems:'flex-end'
+        
     },
     buttonSmall: {               
         width:70,
@@ -662,13 +666,13 @@ var styles = StyleSheet.create({
         color: 'white'
     },
   buttonContainer: { 
+        alignItems: 'center',
         flexDirection: 'row',        
         backgroundColor: '#C9C9C9',
    },
    buttonContainerVertical:{   
     alignItems: 'center',
-    flexDirection:'column',
-    
+    flex:1,    
     backgroundColor: '#C9C9C9',
    },
    image:{
