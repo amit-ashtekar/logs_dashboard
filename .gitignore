@@ -4,4 +4,4 @@ dist
 .sass-cache
 .idea
 .project
-*.xcworkspacedata
+*.xcworkspacedatanpm-debug.log

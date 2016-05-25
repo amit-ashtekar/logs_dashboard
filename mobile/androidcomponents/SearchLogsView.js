@@ -15,6 +15,7 @@ import {urlobj} from 'common/apiurls';
 //import { Button, Card } from 'react-native-material-design';
 import moment from 'moment';
 import { Button, Subheader, COLOR } from 'react-native-material-design';
+import gobutton from '../resources/gobutton.png';
 
 
  import React, {
@@ -52,13 +53,15 @@ constructor(props) {
     eventSwitchIsOn: false,
     //Filter initializations
     filterPattern: '',
-    startTime:'',
-    endTime:'',
+    startTime:0,
+    endTime:0,
     value:'0',
     simpleText: 'pick a date',
     localLogEventsConfig: {},
     isPagingNext: false,
-    isNextPrevDisabled:false,
+    isNextPrevDisabled:false, 
+    txtStartDate:'Start Date', 
+    txtEndDate:'End Date',   
   }
  }
 
@@ -138,9 +141,7 @@ constructor(props) {
       },
         dataSource: this.state.dataSource.cloneWithRows(nextProps.items[0].events),
         loading: false,
-        startTime:'',
-        endTime:''
-
+        
 
       });
  }
@@ -174,15 +175,34 @@ constructor(props) {
 
 search(){
   if(this.state.isLiveLogs===true){
-        this.showLiveLogs(false) 
+      this.setState({eventSwitchIsOn: false})
+       this.setState({
+            loading: true,
+            dataSource: this.state.dataSource.cloneWithRows([]),            
+            isLiveLogs: false,
+            isNextPrevDisabled:true,
+            startTime:0,
+            endTime:0,
+          });     
+       console.log('LiveLogHandler unsubscribe...');
+       console.log(this.props.LiveLogHandler.LiveLogHandler);      
+       this.props.LiveLogHandler.LiveLogHandler.unsubscribe();
+       
       }
-  console.log("search query = " + this.state.searchString);
+      this.setState({simpleDate:''});
+      console.log("search query = " + this.state.searchString);
           this.setState({
             loading: true,
             dataSource: this.state.dataSource.cloneWithRows([]),
             isSearching : true,
             isNextPrevDisabled:true,
+            /*startTime:0,
+            endTime:0,
+            txtStartDate:'Start Date',
+            txtEndDate:'End Date'*/
           });
+          /*filterLogParams.startTime=null;
+          filterLogParams.endTime=null;*/
           filterLogParams.filterPattern = this.state.searchString;
           this.props.itemactions.getFilteredLogs(urlobj.getFilterLogEvents,undefined, filterLogParams,this.successcb);
           // this.setState({isSearching : true})
@@ -190,8 +210,11 @@ search(){
 }
 
   showLiveLogs(value) {
+
        console.log('***Live Log***');
        console.log(value);
+       this.setState({simpleDate:''});
+       this.searchInput.setNativeProps({text:''});
        if (value === true) {
          this.subscribeLiveLogs();
        } else {
@@ -210,7 +233,13 @@ search(){
             dataSource: this.state.dataSource.cloneWithRows([]),            
             isLiveLogs: true,
             isNextPrevDisabled:true,
+            startTime:0,            
+            endTime:0,
+            txtStartDate:'Start Date',
+            txtEndDate:'End Date'
           });
+        filterLogParams.filterPattern=null;
+
        this.props.itemactions.getLiveLogs(urlobj.getLiveLogs,_getLogEvents,this.successcb);
         
      }
@@ -222,6 +251,10 @@ search(){
             dataSource: this.state.dataSource.cloneWithRows([]),            
             isLiveLogs: false,
             isNextPrevDisabled:false,
+            startTime:0,            
+            endTime:0,
+            txtStartDate:'Start Date',
+            txtEndDate:'End Date'
           });     
        console.log('LiveLogHandler unsubscribe...');
        console.log(this.props.LiveLogHandler.LiveLogHandler);
@@ -231,31 +264,52 @@ search(){
      }
    
 
-    onHandleStartDateChange(value){   
-      if(this.state.isLiveLogs===true){
-        this.showLiveLogs(false) 
+    onHandleStartDateChange(value){ 
+
+      if(this.state.isLiveLogs===true){      
+          this.setState({
+            loading: true,
+            dataSource: this.state.dataSource.cloneWithRows([]),            
+            isLiveLogs: false,
+            isNextPrevDisabled:true,
+            eventSwitchIsOn:false,
+          }); 
+
+        filterLogParams.startTime=null;
+        filterLogParams.endTime=null;
+
+
+       console.log('LiveLogHandler unsubscribe...');
+       console.log(this.props.LiveLogHandler.LiveLogHandler);      
+       this.props.LiveLogHandler.LiveLogHandler.unsubscribe();
+       
       }
+
+      //this.searchInput.setNativeProps({text:''});
       console.log("onHandleStartDateChange()",value)
-      this.setState({
+        
+        this.setState({
             loading: true,
             dataSource: this.state.dataSource.cloneWithRows([]), 
             isNextPrevDisabled:true,           
           });
-          
+
+          filterLogParams.filterPattern = this.state.searchString;
+
           if(value ==='start'){  
             filterLogParams.startTime =this.state.startTime;
            // filterLogParams.endTime='';
-              filterLogParams.endTime = null;
+              //filterLogParams.endTime = null;
             
           }else{
             filterLogParams.endTime =this.state.endTime;
             //filterLogParams.startTime='';
-            filterLogParams.startTime = null;
+            //filterLogParams.startTime = null;
           }
            
             console.log("Bipin -startTime :", this.state.startTime);
             console.log("Bipin -endTime :", this.state.endTime)
-           // console.log("Bipin -filterLogParams-startTime :", filterLogParams.startTime);
+            console.log("Bipin -filterLogParams-searchstring :", filterLogParams.filterPattern);
             console.log("filterLogParams:",filterLogParams);
             this.props.itemactions.getFilteredLogs(urlobj.getFilterLogEvents,undefined, filterLogParams,this.successcb);
         
@@ -307,12 +361,25 @@ async showPicker(stateKey, options) {
           var dateTime = date.getTime(); 
           
          if(stateKey==='start'){
-              this.setState({startTime:dateTime});
+          if(this.state.endTime>=dateTime){
+              this.setState({startTime:dateTime,txtStartDate:date.toLocaleDateString(),simpleDate:'Logs filtered By Start Date '+date.toLocaleDateString()});
               this.onHandleStartDateChange('start');
-          }else{
-              this.setState({endTime:dateTime});
+            }else{
+              Alert.alert( 'Invalid Date Range', 'End Date should always be greater than Start Date', [ {text: 'OK', onPress: () => console.log('OK Pressed!')}, ] )
+            }
+          }else if(this.state.startTime<=dateTime){
+                   console.log('**inside check condition**');
+              this.setState({endTime:dateTime,txtEndDate:date.toLocaleDateString(),simpleDate:'Logs filtered By End Date '+date.toLocaleDateString()});
               this.onHandleStartDateChange('end');
 
+          }else{
+            Alert.alert( 'Invalid Date Range', 'Start Date should always be less than End Date', [ {text: 'OK', onPress: () => console.log('OK Pressed!')}, ] )
+          }
+
+          if(1>2){
+             console.log('**1 is greater**');
+          }else{
+             console.log('**2 is greater**');
           }
       }
       
@@ -371,6 +438,7 @@ renderFooter() {
 }
  render() {
    return (
+    
    <View style={styles.container}>
     <View style={styles.toolbar}>
                 <TouchableHighlight                
@@ -382,47 +450,61 @@ renderFooter() {
                   <Text style={styles.liveText}>Live</Text>
                   <Switch onValueChange={this.showLiveLogs.bind(this)}
                     value={this.state.eventSwitchIsOn}
-
                   />
      
                                        
     </View>
-     <View style={styles.buttonContainer}>
+    <View style={styles.buttonContainer}>  
+    <Button
+          
+          style={styles.buttonPrev}
+          text="<<Previous"
+          disabled={this.state.isNextPrevDisabled}        
+          onPress={this.onPrevPressed.bind(this)}>        
+    </Button>
 
-     
-
-         <TouchableHighlight 
-          style={styles.button}
-        onPress={this.showPicker.bind(this, 'start', {date: this.state.simpleDate})}> 
-        <Text style={styles.buttonText}>Filter By Start Date</Text> 
-        </TouchableHighlight>
-
-        <TouchableHighlight 
-          style={styles.button}
-        onPress={this.showPicker.bind(this, 'end', {date: this.state.simpleDate})}> 
-        <Text style={styles.buttonText}>Filter By End Date</Text> 
-        </TouchableHighlight>
+     <View style={styles.buttonContainerVertical}>
         
-        <Button
-        raised={true}
-        style={styles.buttonText}
-        text="<<Previous"
-        disabled={this.state.isNextPrevDisabled}        
-        onPress={this.onPrevPressed.bind(this)}>        
-        </Button>
+        <Text style={styles.buttonTextSmall}>Date Range</Text>
+       
+          <View style={styles.buttonContainer}>    
+        
+            <TouchableHighlight 
+              style={styles.buttonSmall}
+              onPress={this.showPicker.bind(this, 'start', {})}> 
+              <Text style={styles.buttonText}>{this.state.txtStartDate}</Text> 
+            </TouchableHighlight>
+           
 
-        <Button
-        raised={true}
-        style={styles.button}
+            <TouchableHighlight 
+              style={styles.buttonSmall}
+              onPress={this.showPicker.bind(this, 'end', {})}> 
+              <Text style={styles.buttonText}>{this.state.txtEndDate}</Text> 
+            </TouchableHighlight>
+
+        </View>
+
+        
+        <Text style={styles.buttonTextSmall}>{this.state.simpleDate}</Text>
+       
+       
+        
+    </View>
+
+    <Button       
+        style={styles.buttonNext}
         text="Next>>"
         disabled={this.state.isNextPrevDisabled}        
         onPress={this.onNextPressed.bind(this)}>        
-        </Button>
+    </Button>
 
-      </View>
+       </View>
+      
+      
 
       <View style={styles.sectionContainer}>
           <TextInput style={styles.searchInput}
+            ref={ref => this.searchInput = ref}
             placeholder='Search'            
             onChange={this.onSearchTextChangedEvent.bind(this)}
             keyboardType = 'default'
@@ -441,6 +523,7 @@ renderFooter() {
      onContentSizeChange={this.onContentSizeChange.bind(this)}
      />
      </View>
+     
   
    );
  }
@@ -540,27 +623,74 @@ var styles = StyleSheet.create({
         flex:1                //Step 3
     },
   button: {               
-        flex:1,
+        width:70,
         height: 40,
-        margin:5,
+        
         backgroundColor: '#EEB211',
         borderColor: '#EEB211',
         borderWidth: 1,
-        borderRadius: 8,
+        borderRadius: 8,      
+        justifyContent: 'center'
+    },
+    buttonPrev: {               
+        width:70,
+        height: 40,
+        
+        backgroundColor: '#EEB211',
+        borderColor: '#EEB211',
+        borderWidth: 1,
+        borderRadius: 8,      
+        justifyContent: 'center',
+       
+    },
+    buttonNext: {               
+        width:70,
+        height: 40,
+        
+        backgroundColor: '#EEB211',
+        borderColor: '#EEB211',
+        borderWidth: 1,
+        borderRadius: 8,      
+        justifyContent: 'center',
+        
+    },
+    buttonSmall: {               
+        width:70,
+        height: 25,
+        margin:1,
+        backgroundColor: '#EEB211',
+        borderColor: '#EEB211',
+        borderWidth: 1,
+        borderRadius: 5,
       
       justifyContent: 'center'
     },
   buttonText: {
         fontSize: 16,
         textAlign: 'center',
-        margin: 5,
+        margin: 2,
         color: 'white'
     },
-  buttonContainer: {     
-        flexDirection: 'row',
-        padding: 5,
+    buttonTextSmall: {
+        fontSize: 10,
+        textAlign: 'center',        
+        color: 'white'
+    },
+  buttonContainer: { 
+        alignItems: 'center',
+        flexDirection: 'row',        
         backgroundColor: '#C9C9C9',
    },
+   buttonContainerVertical:{   
+    alignItems: 'center',
+    flex:1,    
+    backgroundColor: '#C9C9C9',
+   },
+   image:{
+    width:25,
+    height:25,
+   }
+
 
  });
 
