@@ -467,52 +467,6 @@ constructor(props) {
        this.setState({eventSwitchIsOn: false});
      }
 
-/*
-    //  renderSectionHeader(sectionData, sectionID) {
-    renderHeader() {
-       console.log('In header...');
-     return (
-       <View style={styles.container}>
-       <View style={styles.buttonsContainer}>
-       <TouchableHighlight style={styles.button}
-       underlayColor='#F5FCFF'
-       onPress={this.onFilter.bind(this)}>
-       <Text style={styles.buttonText}>Filter</Text>
-       </TouchableHighlight>
-       <TouchableHighlight style={styles.button}
-       underlayColor='#F5FCFF'
-       onPress={this.onPrevPressed.bind(this)}>
-       <Text style={styles.buttonText}>Prev</Text>
-       </TouchableHighlight>
-       <TouchableHighlight style={styles.button}
-       underlayColor='#F5FCFF'
-       onPress={this.onNextPressed.bind(this)}>
-       <Text style={styles.buttonText}>Next</Text>
-       </TouchableHighlight>
-       <Text style={styles.liveText}>Live</Text>
-       <Switch
-            onValueChange={this.showLiveLogs.bind(this)}
-            value={this.state.eventSwitchIsOn}
-             />
-       </View>
-       <View style={styles.sectionContainer}>
-          <TextInput style={styles.searchInput}
-            placeholder='Search'
-            value = {this.state.searchString}
-            onChange={this.onSearchTextChangedEvent.bind(this)}
-            keyboardType = 'default'
-            keyboardAppearance = 'dark'
-            clearButtonMode = 'while-editing'
-            enablesReturnKeyAutomatically = {true}
-            returnKeyType = 'search'
-            onKeyPress = {this.onkeyPressEvent.bind(this)}
-          />
-        </View>
-        </View>
-      );
-}
-*/
-
 renderFooter() {
    if (this.state.loading) {
    return (
@@ -577,7 +531,7 @@ renderSegmentedControl() {
   return (
     <View style={styles.buttonsContainer}>
       <SegmentedControlIOS style={{flex:1}}
-        values={['Defualt','Pages','StartDt', 'EndDt', "Range", 'Live']}
+        values={['Default','Pages','StartDt', 'EndDt', "Range", 'Live']}
         selectedIndex={this.state.selectedIndex}
         onChange={(event) => {
         this.setState({selectedIndex: event.nativeEvent.selectedSegmentIndex});
@@ -877,14 +831,6 @@ datePicker() {
   );
 }
 
-// renderAdvancefilter() {
-//   return(
-//     <View>
-//       {this.renderPrevNextAndLiveFilters()}
-//       {this.renderDateFilters()}
-//   </View>);
-// }
-
 renderAdvancefilter() {
   return(
     <View>
@@ -892,9 +838,6 @@ renderAdvancefilter() {
       {this.renderselectedIndex()}
   </View>);
 }
-
-
-
 
 render() {
     var spinner = (this.state.loading || this.state.isPagingNext) ? this.renderActivityIndicator(): ( null);
@@ -912,20 +855,7 @@ render() {
      </View>
    );
  }
-
-
- // render() {
- //   return (
- //     <ListView
- //     dataSource={this.state.dataSource}
- //     renderRow={this.renderRow.bind(this)}
- //     //renderSectionHeader={this.renderSectionHeader.bind(this)}
- //     renderFooter={this.renderFooter.bind(this)}
- //     renderHeader={this.renderHeader.bind(this)}
- //     //enableEmptySections= {true}
- //     />
- //   );
- // }
+ 
 }
 
 const mapStateToProps = (state) => ({
