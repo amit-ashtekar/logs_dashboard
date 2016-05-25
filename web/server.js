@@ -7,8 +7,9 @@ app = express();
 app.use(express["static"](dist));
 app.set("port", process.env.PORT);
 var AWS = require('aws-sdk');
-AWS.config.update({accessKeyId: 'AKIAJXJRNLFSZEJM7K6Q', secretAccessKey: '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',region:'us-west-2'});
-//AWS.config.update({accessKeyId: 'akid', secretAccessKey: 'secret'});
+//AWS.config.update({accessKeyId: 'AKIAJXJRNLFSZEJM7K6Q', secretAccessKey: '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',region:'us-west-2'});
+AWS.config.update({region:'us-west-2'});
+
 var cloudwatchlogs = new AWS.CloudWatchLogs();
 
 var filterLogEventsParams = {
