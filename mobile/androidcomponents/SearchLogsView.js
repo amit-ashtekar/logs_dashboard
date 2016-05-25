@@ -263,8 +263,7 @@ search(){
 
        this.setState({
             loading: true,
-            dataSource: this.state.dataSource.cloneWithRows([]),            
-            isLiveLogs: false,
+            dataSource: this.state.dataSource.cloneWithRows([]),
             isNextPrevDisabled:false,
             startTime:0,            
             endTime:0,
