@@ -183,7 +183,6 @@ search(){
             isNextPrevDisabled:true,
             startTime:0,
             endTime:0,
-
           });     
        console.log('LiveLogHandler unsubscribe...');
        console.log(this.props.LiveLogHandler.LiveLogHandler);      
@@ -197,13 +196,13 @@ search(){
             dataSource: this.state.dataSource.cloneWithRows([]),
             isSearching : true,
             isNextPrevDisabled:true,
-            startTime:0,
+            /*startTime:0,
             endTime:0,
             txtStartDate:'Start Date',
-            txtEndDate:'End Date'
+            txtEndDate:'End Date'*/
           });
-          filterLogParams.startTime=null;
-          filterLogParams.endTime=null;
+          /*filterLogParams.startTime=null;
+          filterLogParams.endTime=null;*/
           filterLogParams.filterPattern = this.state.searchString;
           this.props.itemactions.getFilteredLogs(urlobj.getFilterLogEvents,undefined, filterLogParams,this.successcb);
           // this.setState({isSearching : true})
@@ -239,6 +238,8 @@ search(){
             txtStartDate:'Start Date',
             txtEndDate:'End Date'
           });
+        filterLogParams.filterPattern=null;
+
        this.props.itemactions.getLiveLogs(urlobj.getLiveLogs,_getLogEvents,this.successcb);
         
      }
@@ -263,32 +264,38 @@ search(){
      }
    
 
-    onHandleStartDateChange(value){   
-      if(this.state.isLiveLogs===true){
-      this.setState({eventSwitchIsOn: false})
-       this.setState({
+    onHandleStartDateChange(value){ 
+
+      if(this.state.isLiveLogs===true){      
+          this.setState({
             loading: true,
             dataSource: this.state.dataSource.cloneWithRows([]),            
             isLiveLogs: false,
-            isNextPrevDisabled:true,            
-            
-
+            isNextPrevDisabled:true,
+            eventSwitchIsOn:false,
           }); 
-          filterLogParams.startTime=null;
-          filterLogParams.endTime=null;
+
+        filterLogParams.startTime=null;
+        filterLogParams.endTime=null;
+
+
        console.log('LiveLogHandler unsubscribe...');
        console.log(this.props.LiveLogHandler.LiveLogHandler);      
        this.props.LiveLogHandler.LiveLogHandler.unsubscribe();
        
       }
-      this.searchInput.setNativeProps({text:''});
+
+      //this.searchInput.setNativeProps({text:''});
       console.log("onHandleStartDateChange()",value)
-      this.setState({
+        
+        this.setState({
             loading: true,
             dataSource: this.state.dataSource.cloneWithRows([]), 
             isNextPrevDisabled:true,           
           });
-          
+
+          filterLogParams.filterPattern = this.state.searchString;
+
           if(value ==='start'){  
             filterLogParams.startTime =this.state.startTime;
            // filterLogParams.endTime='';
@@ -302,7 +309,7 @@ search(){
            
             console.log("Bipin -startTime :", this.state.startTime);
             console.log("Bipin -endTime :", this.state.endTime)
-           // console.log("Bipin -filterLogParams-startTime :", filterLogParams.startTime);
+            console.log("Bipin -filterLogParams-searchstring :", filterLogParams.filterPattern);
             console.log("filterLogParams:",filterLogParams);
             this.props.itemactions.getFilteredLogs(urlobj.getFilterLogEvents,undefined, filterLogParams,this.successcb);
         
@@ -354,8 +361,12 @@ async showPicker(stateKey, options) {
           var dateTime = date.getTime(); 
           
          if(stateKey==='start'){
+          if(this.state.endTime>=dateTime){
               this.setState({startTime:dateTime,txtStartDate:date.toLocaleDateString(),simpleDate:'Logs filtered By Start Date '+date.toLocaleDateString()});
               this.onHandleStartDateChange('start');
+            }else{
+              Alert.alert( 'Invalid Date Range', 'End Date should always be greater than Start Date', [ {text: 'OK', onPress: () => console.log('OK Pressed!')}, ] )
+            }
           }else if(this.state.startTime<=dateTime){
                    console.log('**inside check condition**');
               this.setState({endTime:dateTime,txtEndDate:date.toLocaleDateString(),simpleDate:'Logs filtered By End Date '+date.toLocaleDateString()});
