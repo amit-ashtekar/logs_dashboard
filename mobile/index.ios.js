@@ -44,8 +44,6 @@ class mobile extends Component {
     login('admin', 'password')
   }
 
-
-
   render() {
     return (
       <Provider store= {store}>
@@ -54,62 +52,12 @@ class mobile extends Component {
        initialRoute={{
          title: 'Logs Dashboard',
          component: Login,
-         passProps: {listings: MOCKED_DATA}
+         passProps: {listings: MOCKED_DATA},
+         backButtonTitle: 'Logout'
        }}/>
        </Provider>
-      // <View style={styles.container}>
-      // <TouchableHighlight style={styles.button}
-      // underlayColor='#99d9f4'
-      // onPress={this.onLogin.bind(this)}>
-      // <Text style={styles.buttonText}>Call web method</Text>
-      // </TouchableHighlight>
-      // <Text style={styles.welcome}>
-      //     Welcome to React Native!
-      //   </Text>
-      //   <Text style={styles.instructions}>
-      //     To get started, edit index.ios.js
-      //   </Text>
-      //   <Text style={styles.instructions}>
-      //     Press Cmd+R to reload,{'\n'}
-      //     Cmd+D or shake for dev menu
-      //   </Text>
-      // </View>
     );
   }
 }
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     justifyContent: 'center',
-//     alignItems: 'center',
-//     backgroundColor: '#F5FCFF',
-//   },
-//   welcome: {
-//     fontSize: 20,
-//     textAlign: 'center',
-//     margin: 10,
-//   },
-//   instructions: {
-//     textAlign: 'center',
-//     color: '#333333',
-//     marginBottom: 5,
-//   },
-//   button: {
-//     height: 31,
-//     marginTop: 10,
-//     backgroundColor: 'gray',
-//     borderColor: '#48BBEC',
-//     borderWidth: 1,
-//     borderRadius: 8,
-//     marginBottom: 10,
-//     justifyContent: 'center'
-//   },
-//   buttonText: {
-//     fontSize: 20,
-//     textAlign: 'center',
-//     margin: 10,
-//   }
-// });
 
 AppRegistry.registerComponent('mobile', () => mobile);

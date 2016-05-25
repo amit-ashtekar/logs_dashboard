@@ -99,28 +99,13 @@ constructor(props) {
     this.props.navigator.push ({
       title: 'Logs',
       component: SearchLogs,
-      rightButtonTitle: 'Advance',
+      rightButtonTitle: 'Advanced',
                     onRightButtonPress: this.onRightButtonPress,
                     passProps: {
                         events: rightButtonHandler
                     }
     });
   }
-
-  // componentDidMount() {
-  //     // this.fetchData();
-  //   }
-  //
-  //   fetchData() {
-  //   fetch(REQUEST_URL)
-  //     .then((response) => response.json())
-  //     .then((responseData) => {
-  //       this.setState({
-  //         movies: responseData.movies,
-  //       });
-  //     })
-  //     .done();
-  // }
 
   renderRow(rowData, sectionID, rowID) {
     return (
@@ -156,4 +141,3 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 export default connect(mapStateToProps,mapDispatchToProps)(Streams);
-// module.exports = Streams;
