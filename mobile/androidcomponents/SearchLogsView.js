@@ -12,10 +12,9 @@ import { bindActionCreators } from 'redux'
 import * as itemActionCreators from 'common/webServices/itemService';
 import {logEventsConfig, filterLogParams} from 'common/AWSConfig/config.js';
 import {urlobj} from 'common/apiurls';
-//import { Button, Card } from 'react-native-material-design';
 import moment from 'moment';
 import { Button, Subheader, COLOR } from 'react-native-material-design';
-import gobutton from '../resources/gobutton.png';
+import gobutton from '../resources/unnamed.png';
 
 
  import React, {
@@ -74,7 +73,7 @@ constructor(props) {
 
  loadDefaultLogs(){
    this.props.itemactions.getItems(urlobj.getItems,undefined, logEventsConfig,this.successcb);
-    this.setState({ loading: true });
+   this.setState({ loading: true });
  }
  componentDidMount() {
   //  this.setState({searchString : "TRACE PerformanceMonitorInterceptor"})
@@ -124,8 +123,7 @@ constructor(props) {
       console.log(nextProps.items[0].events);
     
      this.setState({
-       isSearching: false,
-       searchString:'',
+       isSearching: false,      
        dataSource: this.state.dataSource.cloneWithRows(nextProps.items[0].events),
        loading: false
      });
@@ -189,6 +187,7 @@ search(){
        this.props.LiveLogHandler.LiveLogHandler.unsubscribe();
        
       }
+
       this.setState({simpleDate:''});
       console.log("search query = " + this.state.searchString);
           this.setState({
@@ -196,17 +195,12 @@ search(){
             dataSource: this.state.dataSource.cloneWithRows([]),
             isSearching : true,
             isNextPrevDisabled:true,
-            /*startTime:0,
-            endTime:0,
-            txtStartDate:'Start Date',
-            txtEndDate:'End Date'*/
+            
           });
-          /*filterLogParams.startTime=null;
-          filterLogParams.endTime=null;*/
+         
           filterLogParams.filterPattern = this.state.searchString;
           this.props.itemactions.getFilteredLogs(urlobj.getFilterLogEvents,undefined, filterLogParams,this.successcb);
-          // this.setState({isSearching : true})
-          // console.log("isSearching = " + this.state.isSearching);
+          
 }
 
   showLiveLogs(value) {
@@ -236,9 +230,11 @@ search(){
             startTime:0,            
             endTime:0,
             txtStartDate:'Start Date',
-            txtEndDate:'End Date'
+            txtEndDate:'End Date',
+            searchString:'',
           });
         filterLogParams.filterPattern=null;
+
 
        this.props.itemactions.getLiveLogs(urlobj.getLiveLogs,_getLogEvents,this.successcb);
         
@@ -262,6 +258,32 @@ search(){
        this.props.LiveLogHandler.LiveLogHandler.unsubscribe();
        this.loadDefaultLogs();
      }
+
+     onDefaultButtonClicked(){
+
+       this.setState({
+            loading: true,
+            dataSource: this.state.dataSource.cloneWithRows([]),            
+            isLiveLogs: false,
+            isNextPrevDisabled:false,
+            startTime:0,            
+            endTime:0,
+            searchString:'',            
+            txtStartDate:'Start Date',
+            txtEndDate:'End Date'
+          }); 
+       this.searchInput.setNativeProps({text:''});    
+       console.log('LiveLogHandler unsubscribe...');
+       console.log(this.props.LiveLogHandler.LiveLogHandler);
+        if(this.state.isLiveLogs){
+        this.setState({isLiveLogs: false, eventSwitchIsOn:false,   
+                     });  
+        this.props.LiveLogHandler.LiveLogHandler.unsubscribe();
+       
+      }
+      this.loadDefaultLogs();
+       
+     }
    
 
     onHandleStartDateChange(value){ 
@@ -272,21 +294,18 @@ search(){
             dataSource: this.state.dataSource.cloneWithRows([]),            
             isLiveLogs: false,
             isNextPrevDisabled:true,
-            eventSwitchIsOn:false,
+            eventSwitchIsOn:false,           
           }); 
 
         filterLogParams.startTime=null;
         filterLogParams.endTime=null;
 
-
        console.log('LiveLogHandler unsubscribe...');
-       console.log(this.props.LiveLogHandler.LiveLogHandler);      
-       this.props.LiveLogHandler.LiveLogHandler.unsubscribe();
-       
+       console.log(this.props.LiveLogHandler.LiveLogHandler); 
+
+       this.props.LiveLogHandler.LiveLogHandler.unsubscribe();       
       }
 
-      //this.searchInput.setNativeProps({text:''});
-      console.log("onHandleStartDateChange()",value)
         
         this.setState({
             loading: true,
@@ -298,13 +317,8 @@ search(){
 
           if(value ==='start'){  
             filterLogParams.startTime =this.state.startTime;
-           // filterLogParams.endTime='';
-              //filterLogParams.endTime = null;
-            
-          }else{
+            }else{
             filterLogParams.endTime =this.state.endTime;
-            //filterLogParams.startTime='';
-            //filterLogParams.startTime = null;
           }
            
             console.log("Bipin -startTime :", this.state.startTime);
@@ -361,7 +375,7 @@ async showPicker(stateKey, options) {
           var dateTime = date.getTime(); 
           
          if(stateKey==='start'){
-          if(this.state.endTime>=dateTime){
+          if(this.state.endTime>=dateTime || this.state.endTime===0){
               this.setState({startTime:dateTime,txtStartDate:date.toLocaleDateString(),simpleDate:'Logs filtered By Start Date '+date.toLocaleDateString()});
               this.onHandleStartDateChange('start');
             }else{
@@ -376,11 +390,6 @@ async showPicker(stateKey, options) {
             Alert.alert( 'Invalid Date Range', 'Start Date should always be less than End Date', [ {text: 'OK', onPress: () => console.log('OK Pressed!')}, ] )
           }
 
-          if(1>2){
-             console.log('**1 is greater**');
-          }else{
-             console.log('**2 is greater**');
-          }
       }
       
         } catch ({code, message}) {
@@ -445,12 +454,31 @@ renderFooter() {
                 onPress={this.onCancel.bind(this)}
                 underlayColor='#dddddd'>                
                   <Text style={styles.toolbarButton}>Back</Text>
-                </TouchableHighlight>
-                  <Text style={styles.toolbarTitle}>Logs</Text> 
-                  <Text style={styles.liveText}>Live</Text>
-                  <Switch onValueChange={this.showLiveLogs.bind(this)}
+                </TouchableHighlight>  
+
+                <Text style={styles.toolbarTitle}>Logs</Text> 
+                
+               
+                  <View style={styles.toolbarContainerVertical}> 
+                    
+                    <View style={styles.toolbar}>
+                    <Text >Reset   </Text>
+                    <TouchableHighlight 
+                    underlayColor='#F5FCFF'
+                    onPress={this.onDefaultButtonClicked.bind(this)}>                    
+                    <Image style={styles.image} source={gobutton} />
+                    </TouchableHighlight>
+                    </View>
+                   <View style={styles.toolbar}>
+                    <Text >Live</Text>
+                    
+                   
+                    <Switch onValueChange={this.showLiveLogs.bind(this)}
                     value={this.state.eventSwitchIsOn}
-                  />
+                    />
+                    </View>
+                    </View>
+                
      
                                        
     </View>
@@ -484,7 +512,7 @@ renderFooter() {
 
         </View>
 
-        
+       
         <Text style={styles.buttonTextSmall}>{this.state.simpleDate}</Text>
        
        
@@ -604,14 +632,14 @@ var styles = StyleSheet.create({
   evenRowStyle: {
         backgroundColor: '#F0E197',
     },
-  toolbar:{            
-        backgroundColor:'#EEB211',
-        paddingTop:30,
-        paddingBottom:10,
-        flexDirection:'row'    //Step 1
+  toolbar:{ 
+  alignItems:'center', 
+                 
+        backgroundColor:'#EEB211',        
+        flexDirection:'row'    
     },
-  toolbarButton:{        width: 50,        //Step 2
-        
+  toolbarButton:{ 
+        width: 50,      
         marginLeft:5,
         textAlign:'center',
         fontSize:20
@@ -681,12 +709,18 @@ var styles = StyleSheet.create({
         flexDirection: 'row',        
         backgroundColor: '#C9C9C9',
    },
+
    buttonContainerVertical:{   
     alignItems: 'center',
     flex:1,    
     backgroundColor: '#C9C9C9',
    },
+   toolbarContainerVertical:{   
+    alignItems: 'center',   
+   },
+
    image:{
+    padding:5,
     width:25,
     height:25,
    }
