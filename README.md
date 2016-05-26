@@ -14,16 +14,23 @@
     | AWS_ACCESS_KEY_ID       |   XXXXXX value XXXXXX     |
     | AWS_SECRET_ACCESS_KEY   |   XXXXXX value XXXXXX     |
 
-3. Clone the repo,traverse to the "web" folder and run the installation commands
+3. Set your basic authentication credentials to login into Web
+    
+    | Environment Variable    |       Value               |
+    | ----------------------- |:-------------------------:|
+    | AUTH_USERNAME           |   synerzip                |
+    | AUTH_PASSWORD           |   password                |
+
+4. Clone the repo,traverse to the "web" folder and run the installation commands
     ```
     npm install
     ```
-4. Run the gulp command from command prompt
+5. Run the gulp command from command prompt
     
     ```
     gulp
     ```
-5. Open the browser and visit url
+6. Open the browser, and enter the basic auth credentials to view logs.
     
     ```
     http://localhost:3001/
