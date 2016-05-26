@@ -135,17 +135,17 @@ export default class FilterContainer extends React.Component {
                     </div>
                     </Col>
 
-                    {this.state.value!=="0" ? <Col xs={12} sm={12} md={12} className="form-control bordercls" >
-                        <Col xs={2} sm={2} md={2} >
+                    {this.state.value!=="0" ? <Col xs={12} sm={12} md={12} className="form-control" >
+                        <Col xs={2} sm={2} md={2} className="bordercls">
                             <div><strong>Selected Filter =></strong></div>
                         </Col>
-                        <Col xs={4} sm={4} md={4} >
+                        <Col xs={4} sm={4} md={4} className="bordercls">
                             <div><strong>Filter Pattern:{this.state.filterPattern}</strong></div>
                         </Col>
-                        <Col xs={3} sm={3} md={3}>
+                        <Col xs={3} sm={3} md={3}className="bordercls">
                             <div><strong>Start Date:{moment(this.state.startTime).format("DD-MM-YYYY")}</strong></div>
                         </Col>
-                        <Col xs={3} sm={3} md={3} >
+                        <Col xs={3} sm={3} md={3} className="bordercls" >
                             <div><strong>End Date:{moment(this.state.endTime).format("DD-MM-YYYY")}</strong></div>
                         </Col>
 
