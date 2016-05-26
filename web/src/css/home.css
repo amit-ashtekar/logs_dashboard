@@ -98,9 +98,11 @@ hr {
   float: none;
   margin: 0 auto 0;
 }
-
+.container.log {
+  padding-bottom: 130px;
+}
 footer {
-  position: absolute;
+  position: fixed;
   bottom: 0;
   width: 100%;
   background: #fff;

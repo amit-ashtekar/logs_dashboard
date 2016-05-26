@@ -32,7 +32,7 @@ export default class CoreLayout extends React.Component {
             </div>
           </div>
         </nav>
-        <div className="container">
+        <div className="container log">
           <div className='row'>
             {this.props.children}
           </div>
