@@ -130,11 +130,27 @@ export default class FilterContainer extends React.Component {
                 onClick={(e)=>this.onSearch(e)}>
                 <Glyphicon glyph="search" />
             </button>
+
                         </div>
                     </div>
                     </Col>
 
+                    {this.state.value!=="0" ? <Col xs={12} sm={12} md={12} className="form-control bordercls" >
+                        <Col xs={2} sm={2} md={2} >
+                            <div><strong>Selected Filter =></strong></div>
+                        </Col>
+                        <Col xs={4} sm={4} md={4} >
+                            <div><strong>Filter Pattern:{this.state.filterPattern}</strong></div>
+                        </Col>
+                        <Col xs={3} sm={3} md={3}>
+                            <div><strong>Start Date:{moment(this.state.startTime).format("DD-MM-YYYY")}</strong></div>
+                        </Col>
+                        <Col xs={3} sm={3} md={3} >
+                            <div><strong>End Date:{moment(this.state.endTime).format("DD-MM-YYYY")}</strong></div>
+                        </Col>
 
+                    </Col>: null
+                    }
                 </div>
         )
     }
