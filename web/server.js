@@ -4,6 +4,20 @@ http = require('http');
 path = require("path");
 dist = path.join(__dirname, './dist');
 app = express();
+// Basic Authentication added on top of express server
+app.use(function(req, res, next){
+  var auth;
+  if (req.headers.authorization) {
+    auth = new Buffer(req.headers.authorization.substring(6), 'base64').toString().split(':');
+  }
+  if (!auth || auth[0] !== process.env.AUTH_USERNAME || auth[1] !== process.env.AUTH_PASSWORD) {
+    res.statusCode = 401;
+    res.setHeader('WWW-Authenticate', 'Basic realm="logs-dashboard"');
+    res.end("You're not authorized to access this page!");
+  } else {
+    next();
+  }
+});
 app.use(express["static"](dist));
 app.set("port", process.env.PORT);
 var AWS = require('aws-sdk');
