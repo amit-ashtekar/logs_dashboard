@@ -16,7 +16,7 @@ export default class CoreLayout extends React.Component {
           <div className="container-fluid">
             <ul className="nav navbar-nav pull-right">
               <li><Link  to="/">Home</Link></li>
-              <li><Link  to="/itemcontainer">Dashboard</Link></li>
+              <li><Link  to="/dashboard">Dashboard</Link></li>
             </ul>
           </div>
         </nav>
