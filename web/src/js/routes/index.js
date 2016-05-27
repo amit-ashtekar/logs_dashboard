@@ -5,11 +5,9 @@ import {HomeView, LoginView,CheckoutSummary,Item,ModalItem} from '../views';
 
 
 export default(
-    <Route path='/' component={App}>
-        <IndexRoute component={HomeView}/>
-        <Route path="login" component={LoginView}/>
-
-<Route path="itemcontainer" component={ItemContainer}/>
-
-    </Route>
+  <Route path='/' component={App}>
+    <IndexRoute component={HomeView}/>
+    <Route path="login" component={LoginView}/>
+    <Route path="dashboard" component={ItemContainer}/>
+  </Route>
 );
