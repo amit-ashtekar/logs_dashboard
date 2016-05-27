@@ -47,6 +47,10 @@ hr {
   letter-spacing: 3px;
 }
 
+.nav>li {
+  display: inline-block;
+}
+
 .img-full {
   min-width: 100%;
 }
