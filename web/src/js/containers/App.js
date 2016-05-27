@@ -13,23 +13,11 @@ export default class CoreLayout extends React.Component {
     return (
       <div>
         <nav className="navbar navbar-default" role="navigation">
-          <div className="container">
-            <div className="navbar-header">
-              <button type="button" className="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-                <span className="sr-only">Toggle navigation</span>
-                <span className="icon-bar"></span>
-                <span className="icon-bar"></span>
-                <span className="icon-bar"></span>
-              </button>
-              <a className="navbar-brand" href="index.html">Business Casual</a>
-            </div>
-
-            <div className="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-              <ul className="nav navbar-nav navbar-right">
-                <li><Link  to="/">Home</Link></li>
-                <li><Link  to="/itemcontainer">Dashboard</Link></li>
-              </ul>
-            </div>
+          <div className="container-fluid">
+            <ul className="nav navbar-nav pull-right">
+              <li><Link  to="/">Home</Link></li>
+              <li><Link  to="/itemcontainer">Dashboard</Link></li>
+            </ul>
           </div>
         </nav>
         <div className="container log">
