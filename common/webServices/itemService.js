@@ -17,7 +17,8 @@ export function getItems(url,paginationAction,getLogEventsStorObj,successcb){
         }
         let config={
             method: 'GET',
-            headers: {  'Content-Type': 'application/json', 'Accept': 'application/json','authorization':'151561vdfvdbdbdb1561fdbdf','Logeventsparam':JSON.stringify(logEventsConfig) }
+            credentials: 'same-origin',
+            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'Logeventsparam':JSON.stringify(logEventsConfig) }
         };
 
         return fetch(url,config)
@@ -48,7 +49,9 @@ export function getLiveLogs(url,getLogEventsStorObj,successcb,errorcb){
 console.log("logEventsConfig.nextToken",logEventsConfig.nextToken);
         var config={
             method: 'GET',
-            headers: {  'Content-Type': 'application/json', 'Accept': 'application/json','authorization':'151561vdfvdbdbdb1561fdbdf','Logeventsparam':JSON.stringify(logEventsConfig) }
+            credentials: 'same-origin',
+            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json',
+              'Logeventsparam':JSON.stringify(logEventsConfig) }
         };
         var service = Rx.Observable.defer(function () {
             return  fetch(url,config) .then(
@@ -96,7 +99,9 @@ export function getFilteredLogs(url,paginationAction,filteredLogObj,successcb){
 
         let config={
             method: 'GET',
-            headers: {  'Content-Type': 'application/json', 'Accept': 'application/json','authorization':'151561vdfvdbdbdb1561fdbdf','filterLogEventsParams':JSON.stringify(filteredLogObj) }
+            credentials: 'same-origin',
+            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json',
+              'filterLogEventsParams':JSON.stringify(filteredLogObj) }
         };
 
         return fetch(url,config)
