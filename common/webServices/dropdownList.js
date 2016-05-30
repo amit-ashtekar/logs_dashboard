@@ -10,7 +10,8 @@ export function getGroups(url){
 
         let config={
             method: 'GET',
-            headers: {  'Content-Type': 'application/json', 'Accept': 'application/json','authorization':'151561vdfvdbdbdb1561fdbdf' }
+            credentials: 'same-origin',
+            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json'}
         };
         dispatch(getGroupList());
         return fetch(url,config)
@@ -36,7 +37,8 @@ export function getStreams(url){
 
         let config={
             method: 'GET',
-            headers: {  'Content-Type': 'application/json', 'Accept': 'application/json','authorization':'151561vdfvdbdbdb1561fdbdf' }
+            credentials: 'same-origin',
+            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json'}
         };
         dispatch(getStreamList());
         return fetch(url,config)
