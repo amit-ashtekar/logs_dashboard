@@ -105,6 +105,9 @@ hr {
 .container.log {
   padding-bottom: 130px;
 }
+.row.box div {
+  word-wrap: break-word;
+}
 footer {
   position: fixed;
   bottom: 0;
