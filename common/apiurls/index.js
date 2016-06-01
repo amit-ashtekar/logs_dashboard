@@ -3,12 +3,10 @@
  */
 
 export const urlobj = {
-
-    getItems: 'http://localhost:3001/getLogEvents/',
-    getLiveLogs:'http://localhost:3001/getLogEvents/',
-    login:'http://localhost:3001/auth/getToken',
-    getGroups:'http://localhost:3001/getGroups/',
-    getStreams:'http://localhost:3001/getStreams/',
-    getFilterLogEvents:'http://localhost:3001/getFilterLogEvents/'
-
+  getItems: '/getLogEvents/',
+  getLiveLogs:'/getLogEvents/',
+  login:'/auth/getToken',
+  getGroups:'/getGroups/',
+  getStreams:'/getStreams/',
+  getFilterLogEvents:'/getFilterLogEvents/'
 }
