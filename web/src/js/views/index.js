@@ -6,9 +6,8 @@ import ItemList from './ItemList';
 
 
 export{
-    HomeView,
-    LoginView,
-    Item,
-    ItemList
-
-    }
+  HomeView,
+  LoginView,
+  Item,
+  ItemList
+}

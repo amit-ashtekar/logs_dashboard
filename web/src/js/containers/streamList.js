@@ -15,58 +15,52 @@ import {urlobj} from 'common/apiurls';
 
 
 export default class StreamListContainer extends React.Component {
-    componentWillMount (){
-        this.props.streamwebactions.getStreams(urlobj.getStreams);
+  componentWillMount (){
+    this.props.streamwebactions.getStreams(urlobj.getStreams);
+  }
+  onStreamSelected(e){
+    e.preventDefault();
+    console.log("selected Stream:",e.target.value);
+    this.props.streamactions.selectedStream(e.target.value);
+    if(e.target.value!=="select") {
+      var getLogEventsStorObj= JSON.parse( localStorage.getItem("getLogEvents"));
+      this.props.loaderAction.startLoader();
+      this.props.itemactions.getItems(urlobj.getItems,undefined, getLogEventsStorObj,this.successcb);
     }
-    onStreamSelected(e){
-        e.preventDefault();
-        console.log("selected Stream:",e.target.value);
-        this.props.streamactions.selectedStream(e.target.value);
-        if(e.target.value!=="select") {
-            var getLogEventsStorObj= JSON.parse( localStorage.getItem("getLogEvents"));
-            this.props.loaderAction.startLoader();
-            this.props.itemactions.getItems(urlobj.getItems,undefined, getLogEventsStorObj,this.successcb);
-        }
-    }
-    successcb(resJson){
-        var getLogEvents={};
-        getLogEvents.nextForwardToken=resJson.nextForwardToken;
-        getLogEvents. nextBackwardToken=resJson. nextBackwardToken;
-        localStorage.setItem("getLogEvents",JSON.stringify(getLogEvents));
-    }
-    render() {
-        const { streams } = this.props;
-        if(streams.streams) {
-            var streamValues = streams.streams.streams.map((stream) => {
-                    return ( < option value = {stream} > {stream} </ option >)
-        }
-    );
+  }
+  successcb(resJson){
+    var getLogEvents={};
+    getLogEvents.nextForwardToken=resJson.nextForwardToken;
+    getLogEvents. nextBackwardToken=resJson. nextBackwardToken;
+    localStorage.setItem("getLogEvents",JSON.stringify(getLogEvents));
+  }
+  render(){
+    const { streams } = this.props;
+    if(streams.streams) {
+      var streamValues = streams.streams.streams.map((stream) => {
+        return ( < option value = {stream} > {stream} </ option >)
+      });
     }
     return (
-<Input type="select" label="Select Stream"
-    placeholder="Select Stream"
-    onChange={(e)=>this.onStreamSelected(e)}>
-<option value="select">Select Stream</option>
+      <Input type="select" label="Select Stream"
+          placeholder="Select Stream"
+          onChange={(e)=>this.onStreamSelected(e)}>
+      <option value="select">Select Stream</option>
 
-{streamValues}
+      {streamValues}
 
-</Input>
-)
-}
+      </Input>
+    )
+  }
 }
 const mapStateToProps = (state) => ({
-
-    streams:state.streams
-
+  streams:state.streams
 });
 const mapDispatchToProps = (dispatch) => ({
-
-    streamactions:bindActionCreators(groupActionCreators, dispatch),
-    streamwebactions:bindActionCreators(groupWebActionCreators, dispatch),
-    itemactions : bindActionCreators(itemActionCreators, dispatch),
-    loaderAction:bindActionCreators(loaderActionCreators,dispatch)
+  streamactions:bindActionCreators(groupActionCreators, dispatch),
+  streamwebactions:bindActionCreators(groupWebActionCreators, dispatch),
+  itemactions : bindActionCreators(itemActionCreators, dispatch),
+  loaderAction:bindActionCreators(loaderActionCreators,dispatch)
 })
-
-
 
 export default connect(mapStateToProps,mapDispatchToProps)(StreamListContainer);

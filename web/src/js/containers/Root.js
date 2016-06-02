@@ -5,19 +5,17 @@ import {ReduxRouter} from 'redux-router';
 
 export default class Root extends React.Component {
 
-   
-
-    render () {
-        return (
-            <div>
-                <Provider store={this.props.store}>
-                    <div>
-                        <ReduxRouter>
-                            {routes}
-                        </ReduxRouter>
-                    </div>
-                </Provider>
-            </div>
-        );
-    }
+  render () {
+    return (
+      <div>
+        <Provider store={this.props.store}>
+          <div>
+            <ReduxRouter>
+              {routes}
+            </ReduxRouter>
+          </div>
+        </Provider>
+      </div>
+    );
+  }
 }

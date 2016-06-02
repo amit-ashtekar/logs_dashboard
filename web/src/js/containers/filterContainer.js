@@ -17,157 +17,141 @@ import DatePicker from 'react-datepicker';
 import moment from 'moment';
 
 export default class FilterContainer extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            filterPattern: '',
-            startTime:moment(new Date().getTime()),
-            endTime:moment(new Date().getTime()),
-            value:'0'
+  constructor(props) {
+    super(props);
+    this.state = {
+      filterPattern: '',
+      startTime:moment(new Date().getTime()),
+      endTime:moment(new Date().getTime()),
+      value:'0'
+    };
+  }
+  componentWillMount (){
 
-        };
+  }
+  onSearch(e){
+    e.preventDefault();
+    console.log("filterLogParams:",filterLogParams);
+    this.props.loaderAction.startLoader();
+    this.props.itemactions.getFilteredLogs(urlobj.getFilterLogEvents,undefined, filterLogParams,this.successcb);
+  }
+
+
+  handleChange(event) {
+    //  this.state.filterPattern=event.target.value
+    this.setState({filterPattern: event.target.value});
+    filterLogParams.filterPattern = event.target.value;
+    console.log("input box state :", filterLogParams.filterPattern);
+  }
+
+  handleSelect(event) {
+    //this.state.value=event.target.value;
+    this.setState({ value: event.target.value });
+  }
+  handleDateChange(e,date){
+    //this.setState({startTime: event.target.value});
+    if(e  !==null) {
+      this.setState({startTime: moment(e._d.getTime())});
+      filterLogParams.startTime = e._d.getTime();
+      console.log("startTime :", filterLogParams.startTime);
     }
-    componentWillMount (){
-
+    else{
+      this.setState({startTime: 0});
+      filterLogParams.startTime = 0;
+      console.log("startTime :", filterLogParams.startTime);
     }
-    onSearch(e){
-        e.preventDefault();
-        console.log("filterLogParams:",filterLogParams);
-        this.props.loaderAction.startLoader();
-        this.props.itemactions.getFilteredLogs(urlobj.getFilterLogEvents,undefined, filterLogParams,this.successcb);
+  }
+  handleEndDateChange(e,date){
+    //this.setState({startTime: event.target.value});
+    if(e  !==null) {
+      this.setState({endTime: moment(e._d.getTime())});
+      filterLogParams.endTime = e._d.getTime();
+      console.log("endTime :", filterLogParams.endTime);
     }
-
-
-    handleChange(event) {
-
-        //  this.state.filterPattern=event.target.value
-        this.setState({filterPattern: event.target.value});
-        filterLogParams.filterPattern = event.target.value;
-        console.log("input box state :", filterLogParams.filterPattern);
+    else{
+      this.setState({endTime: 0});
+      filterLogParams.endTime = 0;
+      console.log("endTime :", filterLogParams.endTime);
     }
+  }
+  successcb(resJson){
+   // this.props.loaderAction.stopLoader();
+  }
+  render() {
+    const { streams } = this.props;
 
-    handleSelect(event) {
+    return (
+      <div className="row">
 
-        //this.state.value=event.target.value;
-        this.setState({ value: event.target.value });
+        <Col xs={12} sm={12} md={6}>
+          <Input type="select"
+             placeholder="Set Filter"
+             onChange={(e)=>this.handleSelect(e)}>
+          <option value="select">Select Filter Type</option>
+          <option value="1">Filter Pattern</option>
+          <option value="2">Start Time</option>
+          <option value="3">End Time</option>
 
-    }
-    handleDateChange(e,date){
-        //this.setState({startTime: event.target.value});
-        if(e  !==null) {
-            this.setState({startTime: moment(e._d.getTime())});
-            filterLogParams.startTime = e._d.getTime();
-            console.log("startTime :", filterLogParams.startTime);
-        }
-        else{
-            this.setState({startTime: 0});
-            filterLogParams.startTime = 0;
-            console.log("startTime :", filterLogParams.startTime);
-        }
-    }
-    handleEndDateChange(e,date){
-        //this.setState({startTime: event.target.value});
-        if(e  !==null) {
-            this.setState({endTime: moment(e._d.getTime())});
-            filterLogParams.endTime = e._d.getTime();
-            console.log("endTime :", filterLogParams.endTime);
-        }
-        else{
-            this.setState({endTime: 0});
-            filterLogParams.endTime = 0;
-            console.log("endTime :", filterLogParams.endTime);
-        }
-    }
-    successcb(resJson){
-       // this.props.loaderAction.stopLoader();
-    }
-    render() {
-        const { streams } = this.props;
+          </Input>
+        </Col>
+        <Col xs={10} sm={10} md={6}>
+          <div className="input-group add-on">
 
-        return (
+            { this.state.value==="1" ? <Input type="text"  value={this.state.filterPattern}
+              onChange={(e)=>this.handleChange(e)}>
 
-                <div className="row">
+            </Input> : null }
+            { this.state.value==="0" ? <label className="form-control" >Enter Filtered Value</label> : null }
+            { this.state.value==="2" ?         <DatePicker
+                placeholderText="Click to select a date"
+                selected={this.state.startTime}
+                onChange={(e,date)=>this.handleDateChange(e,date)}
+                className='form-control'>
+            </DatePicker> : null }
+            { this.state.value==="3" ?         <DatePicker
+                placeholderText="Click to select a date"
+                selected={this.state.endTime}
+                onChange={(e,date)=>this.handleEndDateChange(e,date)}
+                className='form-control'>
+            </DatePicker> : null }
 
-                    <Col xs={12} sm={12} md={6}>
-            <Input type="select"
-                   placeholder="Set Filter"
-                   onChange={(e)=>this.handleSelect(e)}>
-                <option value="select">Select Filter Type</option>
-                <option value="1">Filter Pattern</option>
-                <option value="2">Start Time</option>
-                <option value="3">End Time</option>
-
-
-
-            </Input>
-                      </Col>
-                    <Col xs={10} sm={10} md={6}>
-                    <div className="input-group add-on">
-
-                { this.state.value==="1" ? <Input type="text"  value={this.state.filterPattern}
-                                                  onChange={(e)=>this.handleChange(e)}>
-
-                </Input> : null }
-                    { this.state.value==="0" ? <label className="form-control" >Enter Filtered Value</label> : null }
-                    { this.state.value==="2" ?         <DatePicker
-                        placeholderText="Click to select a date"
-                        selected={this.state.startTime}
-                        onChange={(e,date)=>this.handleDateChange(e,date)}
-                        className='form-control'>
-                    </DatePicker> : null }
-                    { this.state.value==="3" ?         <DatePicker
-                        placeholderText="Click to select a date"
-                        selected={this.state.endTime}
-                        onChange={(e,date)=>this.handleEndDateChange(e,date)}
-                        className='form-control'>
-                    </DatePicker> : null }
-
-
-
-
-                    <div className="input-group-btn">
-            <button type="button" className="btn btn-default"
-                onClick={(e)=>this.onSearch(e)}>
+            <div className="input-group-btn">
+              <button type="button" className="btn btn-default"
+              onClick={(e)=>this.onSearch(e)}>
                 <Glyphicon glyph="search" />
-            </button>
+              </button>
+            </div>
+          </div>
+        </Col>
 
-                        </div>
-                    </div>
-                    </Col>
+        {
+          this.state.value!=="0" ? <Col xs={12} sm={12} md={12} className="form-control" >
+            <Col xs={2} sm={2} md={2} className="bordercls">
+                <div><strong>Selected Filter =></strong></div>
+            </Col>
+            <Col xs={4} sm={4} md={4} className="bordercls">
+                <div><strong>Filter Pattern:{this.state.filterPattern}</strong></div>
+            </Col>
+            <Col xs={3} sm={3} md={3}className="bordercls">
+                <div><strong>Start Date:{moment(this.state.startTime).format("DD-MM-YYYY")}</strong></div>
+            </Col>
+            <Col xs={3} sm={3} md={3} className="bordercls" >
+                <div><strong>End Date:{moment(this.state.endTime).format("DD-MM-YYYY")}</strong></div>
+            </Col>
 
-                    {this.state.value!=="0" ? <Col xs={12} sm={12} md={12} className="form-control" >
-                        <Col xs={2} sm={2} md={2} className="bordercls">
-                            <div><strong>Selected Filter =></strong></div>
-                        </Col>
-                        <Col xs={4} sm={4} md={4} className="bordercls">
-                            <div><strong>Filter Pattern:{this.state.filterPattern}</strong></div>
-                        </Col>
-                        <Col xs={3} sm={3} md={3}className="bordercls">
-                            <div><strong>Start Date:{moment(this.state.startTime).format("DD-MM-YYYY")}</strong></div>
-                        </Col>
-                        <Col xs={3} sm={3} md={3} className="bordercls" >
-                            <div><strong>End Date:{moment(this.state.endTime).format("DD-MM-YYYY")}</strong></div>
-                        </Col>
-
-                    </Col>: null
-                    }
-                </div>
-        )
-    }
+          </Col>: null
+        }
+      </div>
+    )
+  }
 }
+
 const mapStateToProps = (state) => ({
-
-
-
 });
 const mapDispatchToProps = (dispatch) => ({
-
-
-    itemactions : bindActionCreators(itemActionCreators, dispatch),
-    loaderAction:bindActionCreators(loaderActionCreators,dispatch)
+  itemactions : bindActionCreators(itemActionCreators, dispatch),
+  loaderAction:bindActionCreators(loaderActionCreators,dispatch)
 })
-
-
 
 export default connect(mapStateToProps,mapDispatchToProps)(FilterContainer);
 

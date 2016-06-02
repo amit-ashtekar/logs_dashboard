@@ -11,44 +11,38 @@ import {connect} from 'react-redux';
 import {urlobj} from 'common/apiurls';
 
 export default class GroupListContainer extends React.Component {
-    componentWillMount (){
-        this.props.groupwebactions.getGroups(urlobj.getGroups);
+  componentWillMount (){
+    this.props.groupwebactions.getGroups(urlobj.getGroups);
+  }
+  onGroupSelected(e,obj){
+    e.preventDefault();
+    console.log("selected Group:",e.target.value);
+  }
+  render() {
+    const { groups } = this.props;
+    if(groups.groups) {
+      var groupValues = groups.groups.groups.map((group) => {
+        return ( < option value = {group} > {group} </ option >)
+      });
     }
-    onGroupSelected(e,obj){
-        e.preventDefault();
-        console.log("selected Group:",e.target.value);
-    }
-    render() {
-        const { groups } = this.props;
-if(groups.groups) {
-    var groupValues = groups.groups.groups.map((group) => {
-            return ( < option value = {group} > {group} </ option >)
-}
-    );
-    }
-        return (
-            <Input type="select" label="Select Group"
+    return (
+      <Input type="select" label="Select Group"
         placeholder="Select Group"
-    onChange={(e)=>this.onGroupSelected(e,this)}>
-<option value="select">Select Group</option>
+        onChange={(e)=>this.onGroupSelected(e,this)}>
+        <option value="select">Select Group</option>
 
-{groupValues}
-
-</Input>
-)
-}
+        {groupValues}
+      </Input>
+    )
+  }
 }
 const mapStateToProps = (state) => ({
-
-    groups:state.groups
-
+  groups:state.groups
 });
+
 const mapDispatchToProps = (dispatch) => ({
-
-    groupactions:bindActionCreators(groupActionCreators, dispatch),
-    groupwebactions:bindActionCreators(groupWebActionCreators, dispatch)
+  groupactions:bindActionCreators(groupActionCreators, dispatch),
+  groupwebactions:bindActionCreators(groupWebActionCreators, dispatch)
 })
-
-
 
 export default connect(mapStateToProps,mapDispatchToProps)(GroupListContainer);
